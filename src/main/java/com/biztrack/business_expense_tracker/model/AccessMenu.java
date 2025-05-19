@@ -6,6 +6,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
+@Table(name = "AccessMenu")
 public class AccessMenu{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,8 +15,8 @@ public class AccessMenu{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "RoleID", nullable = false, foreignKey = @ForeignKey(name = "FK_Users_Role"))
-    private Long roleId;
+    @JoinColumn(name = "RoleID", nullable = false, foreignKey = @ForeignKey(name = "FK_AccessMenus_Role"))
+    private Role roleId;
 
     @Column(name = "Menu")
     private String menu;
