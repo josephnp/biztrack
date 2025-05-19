@@ -24,7 +24,7 @@ public class AccessMenu{
     @Column(name = "CreatedBy", nullable = false, updatable = false)
     private UUID createdBy;
 
-    @Column(name = "ModifiedBy", insertable = false)
+    @Column(name = "CreatedDate", insertable = false)
     private LocalDateTime createdDate;
 
     @Column(name = "ModifiedBy", insertable = false)

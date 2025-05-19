@@ -26,16 +26,21 @@ public class Request{
     @Column(name = "Purpose", length = 100, nullable = false)
     private String purpose;
 
+
     @Column(name = "Amount")
     private Double amount;
 
-    @Column(name = "IsReported")
+    @Column(name = "IsReported", columnDefinition = "BIT DEFAULT 0")
     private Boolean isReported;
 
     @Column(name = "Description")
     private String description;
 
-//    private Status status;
+    @ManyToOne
+    @JoinColumn(name = "StatusID", nullable = false, foreignKey = @ForeignKey(name = "FK_Request_Status"))
+    private Status status;
+
+    @Column(name = "Comment")
     private String comment;
 
     @Column(name = "CreatedBy", nullable = false, updatable = false)

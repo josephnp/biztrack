@@ -23,12 +23,20 @@ public class Report{
     )
     private Request request;
 
-
+    @Column(name = "Amount")
     private Double amount;
+
+    @Column(name = "RefundAmount")
     private Double refundAmount;
+
+    @Column(name = "RefundReceiptUrl")
     private String refundReceiptURL;
 
-//    private Status status;
+    @ManyToOne
+    @JoinColumn(name = "StatusID", nullable = false, foreignKey = @ForeignKey(name = "FK_Report_Status"))
+    private Status status;
+
+    @Column(name = "Comment")
     private String comment;
 
     @Column(name = "CreatedBy", nullable = false, updatable = false)
