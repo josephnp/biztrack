@@ -26,10 +26,16 @@ public class Request{
     @Column(name = "Purpose", length = 100, nullable = false)
     private String purpose;
 
+    @Column(name = "Amount")
     private Double amount;
+
+    @Column(name = "IsReported")
     private Boolean isReported;
+
+    @Column(name = "Description")
     private String description;
-    private Status status;
+
+//    private Status status;
     private String comment;
 
     @Column(name = "CreatedBy", nullable = false, updatable = false)

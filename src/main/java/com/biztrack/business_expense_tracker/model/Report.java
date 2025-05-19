@@ -15,7 +15,7 @@ public class Report{
     @Column(name = "ID")
     private Long id;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(
             name = "RequestID",
             nullable = false,
@@ -23,10 +23,12 @@ public class Report{
     )
     private Request request;
 
+
     private Double amount;
     private Double refundAmount;
     private String refundReceiptURL;
-    private Status status;
+
+//    private Status status;
     private String comment;
 
     @Column(name = "CreatedBy", nullable = false, updatable = false)
