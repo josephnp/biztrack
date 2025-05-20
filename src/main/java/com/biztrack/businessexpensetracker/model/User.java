@@ -13,6 +13,7 @@ public class User {
 
     @Id
     @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne
