@@ -1,4 +1,4 @@
-package com.biztrack.business_expense_tracker.core;
+package com.biztrack.businessexpensetracker.core;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Pageable;

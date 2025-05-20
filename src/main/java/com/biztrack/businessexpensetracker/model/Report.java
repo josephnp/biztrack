@@ -1,4 +1,4 @@
-package com.biztrack.business_expense_tracker.model;
+package com.biztrack.businessexpensetracker.model;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;

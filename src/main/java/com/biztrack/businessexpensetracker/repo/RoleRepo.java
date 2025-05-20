@@ -1,6 +1,6 @@
-package com.biztrack.business_expense_tracker.repo;
+package com.biztrack.businessexpensetracker.repo;
 
-import com.biztrack.business_expense_tracker.model.Role;
+import com.biztrack.businessexpensetracker.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoleRepo extends JpaRepository<Role, Long> {

@@ -1,9 +1,8 @@
-package com.biztrack.business_expense_tracker.dto.validation;
+package com.biztrack.businessexpensetracker.dto.validation;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import org.antlr.v4.runtime.misc.NotNull;
 
 
 public class LoginDTO {

@@ -1,31 +1,30 @@
-package com.biztrack.business_expense_tracker.model;
+package com.biztrack.businessexpensetracker.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Departments")
-public class Department {
+@Table(name = "AccessMenu")
+public class AccessMenu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "Name", nullable = false)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "RoleID", nullable = false, foreignKey = @ForeignKey(name = "FK_AccessMenus_Role"))
+    private Role roleId;
 
-    @Column(name = "Description")
-    private String description;
+    @Column(name = "Menu")
+    private String menu;
 
     @Column(name = "CreatedBy", nullable = false, updatable = false)
     private UUID createdBy;
 
-    @CreationTimestamp
-    @Column(name = "CreatedDate", nullable = false, updatable = false)
+    @Column(name = "CreatedDate", insertable = false)
     private LocalDateTime createdDate;
 
     @Column(name = "ModifiedBy", insertable = false)
@@ -43,20 +42,20 @@ public class Department {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Role getRoleId() {
+        return roleId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRoleId(Role roleId) {
+        this.roleId = roleId;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMenu() {
+        return menu;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMenu(String menu) {
+        this.menu = menu;
     }
 
     public UUID getCreatedBy() {

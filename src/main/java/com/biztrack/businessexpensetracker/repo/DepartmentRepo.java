@@ -1,6 +1,6 @@
-package com.biztrack.business_expense_tracker.repo;
+package com.biztrack.businessexpensetracker.repo;
 
-import com.biztrack.business_expense_tracker.model.Department;
+import com.biztrack.businessexpensetracker.model.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DepartmentRepo extends JpaRepository<Department, Long> {
