@@ -1,15 +1,19 @@
 package com.biztrack.business_expense_tracker.dto.validation;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import org.antlr.v4.runtime.misc.NotNull;
 
 
 public class LoginDTO {
 
-    @Pattern(regexp = "", message = "")
+    @NotBlank(message = "Email can't be blank")
+    @NotEmpty(message = "Email can't be empty")
     private String email;
 
-    @Pattern(regexp = "", message = "")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@_#\\-$])[\\w].{8,15}$",
+            message = "Password format is not valid")
     private String password;
 
     public String getEmail() {
