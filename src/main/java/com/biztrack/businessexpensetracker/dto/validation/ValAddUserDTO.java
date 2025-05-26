@@ -1,4 +1,4 @@
-package com.biztrack.business_expense_tracker.dto.validation;
+package com.biztrack.businessexpensetracker.dto.validation;
 
 import com.biztrack.businessexpensetracker.model.Department;
 import com.biztrack.businessexpensetracker.model.Role;
@@ -10,7 +10,7 @@ public class ValAddUserDTO {
 
     @NotBlank(message = "Name can't be blank")
     @NotEmpty(message = "Name can't be empty")
-    private String name;
+    private String fullName;
 
     @NotBlank(message = "Email can't be blank")
     @NotEmpty(message = "Email can't be empty")
@@ -25,20 +25,18 @@ public class ValAddUserDTO {
             message = "Password format is not valid")
     private String password;
 
-    @NotBlank(message = "Deparment can't be blank")
-    @NotEmpty(message = "Deparment can't be empty")
     private Department department;
 
-    @NotBlank(message = "Role can't be blank")
-    @NotEmpty(message = "Role can't be empty")
     private Role role;
 
-    public String getName() {
-        return name;
+    private boolean isActive = true;
+
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
@@ -79,5 +77,13 @@ public class ValAddUserDTO {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }
