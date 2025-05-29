@@ -1,3 +1,3 @@
-INSERT INTO [projectz].[Departments] VALUES ('IT', 'IT')
+INSERT INTO [projectz].[Departments](Description, Name) VALUES ('IT', 'IT'), ('Finance', 'Finance'), ('Marketing', 'Marketing')
 
-INSERT INTO [projectz].[Roles] VALUES ('Staff', 'Staff')
+INSERT INTO [projectz].[Roles](Description, Name) VALUES ('Staff', 'Staff'), ('Admin', 'Admin'), ('Finance', 'Finance'), ('Manager', 'Manager')

@@ -1,11 +1,11 @@
 package com.biztrack.businessexpensetracker.service;
 
 import com.biztrack.businessexpensetracker.core.IService;
-import com.biztrack.businessexpensetracker.dto.report.RepDepartmentDTO;
-import com.biztrack.businessexpensetracker.dto.validation.ValDepartmentDTO;
+import com.biztrack.businessexpensetracker.dto.report.RepStatusDTO;
+import com.biztrack.businessexpensetracker.dto.validation.ValStatusDTO;
 import com.biztrack.businessexpensetracker.handler.ResponseHandler;
-import com.biztrack.businessexpensetracker.model.Department;
-import com.biztrack.businessexpensetracker.repo.DepartmentRepo;
+import com.biztrack.businessexpensetracker.model.Status;
+import com.biztrack.businessexpensetracker.repo.StatusRepo;
 import com.biztrack.businessexpensetracker.utils.GlobalResponse;
 import com.biztrack.businessexpensetracker.utils.TransformPagination;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
 @Service
 @Transactional
-public class DepartmentService implements IService<Department> {
+public class StatusService implements IService<Status> {
+
     @Autowired
-    private DepartmentRepo departmentRepo;
+    private StatusRepo statusRepo;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -37,41 +37,41 @@ public class DepartmentService implements IService<Department> {
     private TransformPagination tp;
 
     @Override
-    public ResponseEntity<Object> save(Department department, HttpServletRequest request) {
+    public ResponseEntity<Object> save(Status status, HttpServletRequest request) {
         try {
-            Optional<Department> opDepartment = departmentRepo.findByName(department.getName());
-            if (opDepartment.isPresent()) {
+            Optional<Status> opStatus = statusRepo.findByName(status.getName());
+            if (opStatus.isPresent()) {
                 return new ResponseHandler().handleResponse("Data Already Exist !!", HttpStatus.BAD_REQUEST, null, "DEP04FV001", request);
             }
-            if (department == null) {
+            if (status == null) {
                 return new ResponseHandler().handleResponse("Object Null !!", HttpStatus.BAD_REQUEST, null, "DEP04FV002", request);
             }
-            departmentRepo.save(department);
+            statusRepo.save(status);
 
         } catch (Exception e) {
-            return GlobalResponse.dataGagalDisimpan("DEP04FE001", request);
+            return GlobalResponse.dataGagalDisimpan("STA04FE001", request);
         }
         return GlobalResponse.dataBerhasilDisimpan(request);
     }
 
     @Override
-    public ResponseEntity<Object> update(Long id, Department department, HttpServletRequest request) {
+    public ResponseEntity<Object> update(Long id, Status status, HttpServletRequest request) {
         try {
             if (id == null) {
-                return GlobalResponse.objectIsNull("DEP04FV011", request);
+                return GlobalResponse.objectIsNull("STA04FV011", request);
             }
-            if (department == null) {
+            if (status == null) {
                 return new ResponseHandler().handleResponse("Object Null !!", HttpStatus.BAD_REQUEST, null, "DEP04FV012", request);
             }
-            Optional<Department> opDepartment = departmentRepo.findById(id);
-            if (!opDepartment.isPresent()) {
-                return GlobalResponse.dataTidakDitemukan("DEP04FV013", request);
+            Optional<Status> opStatus = statusRepo.findById(id);
+            if (!opStatus.isPresent()) {
+                return GlobalResponse.dataTidakDitemukan("STA04FV013", request);
             }
-            Department DepartmentDB = opDepartment.get();
-            DepartmentDB.setName(department.getName());
-            DepartmentDB.setDescription(department.getDescription());
+            Status StatusDB = opStatus.get();
+            StatusDB.setName(status.getName());
+            StatusDB.setDescription(status.getDescription());
         } catch (Exception e) {
-            return GlobalResponse.dataGagalDiubah("DEP04FE002", request);
+            return GlobalResponse.dataGagalDiubah("STA04FE002", request);
         }
         return GlobalResponse.dataBerhasilDiubah(request);
     }
@@ -80,13 +80,13 @@ public class DepartmentService implements IService<Department> {
     public ResponseEntity<Object> delete(Long id, HttpServletRequest request) {
         try {
             if (id == null) {
-                return GlobalResponse.objectIsNull("DEP04FV021", request);
+                return GlobalResponse.objectIsNull("STA04FV021", request);
             }
-            Optional<Department> opDepartment = departmentRepo.findById(id);
-            if (!opDepartment.isPresent()) {
+            Optional<Status> opStatus = statusRepo.findById(id);
+            if (!opStatus.isPresent()) {
                 return GlobalResponse.dataTidakDitemukan("DEP04FV022", request);
             }
-            departmentRepo.deleteById(id);
+            statusRepo.deleteById(id);
 
         } catch (Exception e) {
             return GlobalResponse.dataGagalDihapus("DEP04FE021", request);
@@ -96,12 +96,12 @@ public class DepartmentService implements IService<Department> {
 
     @Override
     public ResponseEntity<Object> findAll(Pageable pageable, HttpServletRequest request) {
-        Page<Department> page = null;
-        List<Department> list = null;
-        List<RepDepartmentDTO> listDTO = null;
+        Page<Status> page = null;
+        List<Status> list = null;
+        List<RepStatusDTO> listDTO = null;
         Map<String, Object> data = null;
         try {
-            page = departmentRepo.findAll(pageable);
+            page = statusRepo.findAll(pageable);
             if (page.isEmpty()) {
                 return GlobalResponse.dataTidakDitemukan("AUT04FV031", request);
             }
@@ -113,15 +113,13 @@ public class DepartmentService implements IService<Department> {
         return GlobalResponse.dataDitemukan(data, request);
     }
 
-
-    public Department mapToDepartment(ValDepartmentDTO valDepartmentDTO) {
-        return modelMapper.map(valDepartmentDTO, Department.class);
+    public Status mapToStatus(ValStatusDTO valStatusDTO) {
+        return modelMapper.map(valStatusDTO, Status.class);
     }
 
-    public List<RepDepartmentDTO> mapToDTO(List<Department> listDepartment) {
-        return modelMapper.map(listDepartment, new TypeToken<List<RepDepartmentDTO>>() {
+    public List<RepStatusDTO> mapToDTO(List<Status> listStatus) {
+        return modelMapper.map(listStatus, new TypeToken<List<RepStatusDTO>>() {
         }.getType());
     }
-
 
 }
