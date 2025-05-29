@@ -5,6 +5,7 @@ import com.biztrack.businessexpensetracker.dto.validation.ValAddUserDTO;
 import com.biztrack.businessexpensetracker.handler.ResponseHandler;
 import com.biztrack.businessexpensetracker.model.User;
 import com.biztrack.businessexpensetracker.repo.UserRepo;
+import com.biztrack.businessexpensetracker.security.BcryptCustom;
 import com.biztrack.businessexpensetracker.security.Crypto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
@@ -24,6 +25,8 @@ public class AuthService {
     @Autowired
     UserRepo repo;
 
+    BcryptCustom bcrypt = new BcryptCustom(12);
+
     @Autowired
     private ModelMapper modelMapper;
 
@@ -42,8 +45,9 @@ public class AuthService {
         Map<String, Object> m = new HashMap<>();
 
         try {
-            user.setPassword(crypto.performEncrypt(user.getPassword()));
-
+            // enkripsi password doang, kalau mau aman bisa kita enkripsi + email juga
+            user.setPassword(bcrypt.hash(user.getPassword()));
+            System.out.println(user.getPassword());
             repo.save(user);
 
         } catch (Exception e) {
@@ -68,7 +72,7 @@ public class AuthService {
             userNext = opUser.get();
 
             String pwdDB = crypto.performDecrypt(userNext.getPassword());
-            if (!userNext.getPassword().equals(pwdDB)) {
+            if (!user.getPassword().equals(pwdDB)) {
                 return new ResponseHandler().handleResponse("Username atau Password Salah !!", HttpStatus.BAD_REQUEST, null, "AUT012", request);
             }
         } catch (Exception e) {
