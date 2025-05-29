@@ -14,6 +14,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 
@@ -22,7 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class AuthService {
+public class AuthService implements UserDetailsService {
 
     @Autowired
     UserRepo repo;
@@ -108,5 +111,15 @@ public class AuthService {
 
     public User mapToUser(LoginDTO loginDTO) {
         return modelMapper.map(loginDTO, User.class);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> opUser = repo.findByEmail(username);
+        if (!opUser.isPresent()) {
+            throw new UsernameNotFoundException("Username atau Password Salah !!!");
+        }
+        User user = opUser.get();
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
 }

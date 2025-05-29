@@ -27,5 +27,9 @@ public class AuthController {
     public ResponseEntity<Object> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletRequest request) {
         return authService.login(authService.mapToUser(loginDTO), request);
     }
-    
+
+    @GetMapping("/test")
+    public String test() {
+        return "String Test";
+    }
 }

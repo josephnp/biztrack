@@ -49,4 +49,15 @@ public class JwtUtility {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
+    private Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
+
+    public Boolean validateToken(String token) {
+        /** Sudah otomatis tervalidaasi jika expired date masih aktif */
+        String username = getUsernameFromToken(token);
+        return (username != null && !isTokenExpired(token));
+    }
+
 }
