@@ -1,5 +1,6 @@
 package com.biztrack.businessexpensetracker.service;
 
+import com.biztrack.businessexpensetracker.config.JwtConfig;
 import com.biztrack.businessexpensetracker.dto.validation.LoginDTO;
 import com.biztrack.businessexpensetracker.dto.validation.ValAddUserDTO;
 import com.biztrack.businessexpensetracker.handler.ResponseHandler;
@@ -7,6 +8,7 @@ import com.biztrack.businessexpensetracker.model.User;
 import com.biztrack.businessexpensetracker.repo.UserRepo;
 import com.biztrack.businessexpensetracker.security.BcryptCustom;
 import com.biztrack.businessexpensetracker.security.Crypto;
+import com.biztrack.businessexpensetracker.security.JwtUtility;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,9 @@ public class AuthService {
     @Autowired
     private ModelMapper modelMapper;
 
-    private Crypto crypto = new Crypto();
+    @Autowired
+    private JwtUtility jwtUtility;
+
 
     /* Regis service */
     public ResponseEntity<Object> addUser(User user, HttpServletRequest request) {
@@ -78,6 +82,20 @@ public class AuthService {
         }
 
         /* Ini perlu buat menu dan token JWT */
+        Map<String, Object> mapData = new HashMap<>();
+        mapData.put("em", user.getEmail());
+//        mapData.put("id", user.getId());
+//        mapData.put("emp", user.getEmployeeNumber());
+//        mapData.put("dep", user.getDepartment());
+//        mapData.put("rol", user.getRole());
+//        mapData.put("fn", user.getFullName());
+        String token = jwtUtility.generateToken(mapData, user.getEmail());
+
+        if (JwtConfig.getTokenEncryptEnable().equals("y")) {
+            token = Crypto.performEncrypt(token);
+        }
+
+        m.put("token", token);
 
         return new ResponseHandler().handleResponse("Login Berhasil !!", HttpStatus.OK, m, null, request);
     }

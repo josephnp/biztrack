@@ -1,5 +1,6 @@
 package com.biztrack.businessexpensetracker.controller;
 
+import com.biztrack.businessexpensetracker.config.JwtConfig;
 import com.biztrack.businessexpensetracker.dto.validation.LoginDTO;
 import com.biztrack.businessexpensetracker.dto.validation.ValAddUserDTO;
 import com.biztrack.businessexpensetracker.service.AuthService;
@@ -26,9 +27,5 @@ public class AuthController {
     public ResponseEntity<Object> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletRequest request) {
         return authService.login(authService.mapToUser(loginDTO), request);
     }
-
-//    @PostMapping("/login")
-//    public String login() {
-//        return "behasi masuk";
-//    }
+    
 }
