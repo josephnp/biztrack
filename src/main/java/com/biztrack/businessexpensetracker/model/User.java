@@ -59,7 +59,7 @@ public class User {
 //    private LocalDateTime modifiedDate;
 
     @Column(name = "IsActive", nullable = false)
-    private Boolean isActive = false;
+    private Boolean isActive = true;
 
     public UUID getId() {
         return id;

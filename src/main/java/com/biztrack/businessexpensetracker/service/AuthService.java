@@ -22,73 +22,73 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
-    @Autowired
-    UserRepo repo;
-
-    BcryptCustom bcrypt = new BcryptCustom(12);
-
-    @Autowired
-    private ModelMapper modelMapper;
-
-    private Crypto crypto = new Crypto();
-
-    /* Regis service */
-    public ResponseEntity<Object> addUser(User user, HttpServletRequest request) {
-        if (user == null) {
-            return new ResponseHandler().handleResponse("Email Tidak Ditemukan !!", HttpStatus.BAD_REQUEST, null, "AUT001", request);
-        }
-
-        if (user.getEmail() == null) {
-            return new ResponseHandler().handleResponse("Email Tidak Ditemukan !!", HttpStatus.BAD_REQUEST, null, "AUT002", request);
-        }
-
-        Map<String, Object> m = new HashMap<>();
-
-        try {
-            user.setPassword(bcrypt.hash(user.getPassword() + user.getEmail()));
-            repo.save(user);
-
-        } catch (Exception e) {
-            return new ResponseHandler().handleResponse("Server Tidak Dapat Memproses !!", HttpStatus.INTERNAL_SERVER_ERROR, null, "AUT00FE001", request);
-        }
-        return new ResponseHandler().handleResponse("Registrasi berhasil", HttpStatus.OK, m, null, request);
-    }
-
-
-    /* Login service */
-    public ResponseEntity<Object> login(User user, HttpServletRequest request) {
-        Map<String, Object> m = new HashMap<>();
-        User userNext = null;
-        try {
-            String userEmail = user.getEmail();
-            Optional<User> opUser = repo.findByEmail(userEmail);
-
-            if (!opUser.isPresent()) {
-                return new ResponseHandler().handleResponse("User Tidak Ditemukan", HttpStatus.BAD_REQUEST, null, "AUT011", request);
-            }
-
-            userNext = opUser.get();
-
-            if (!bcrypt.verifyHash(user.getPassword() + user.getEmail(), userNext.getPassword())) {
-                return new ResponseHandler().handleResponse("Username atau Password Salah !!", HttpStatus.BAD_REQUEST, null, "AUT012", request);
-            }
-        } catch (Exception e) {
-            return new ResponseHandler().handleResponse("Terjadi Kesalahan Pada Server", HttpStatus.INTERNAL_SERVER_ERROR, null,
-                    "AUT013", request);
-        }
-
-        /* Ini perlu buat menu dan token JWT */
-
-        return new ResponseHandler().handleResponse("Login Berhasil !!", HttpStatus.OK, m, null, request);
-    }
-
-
-    /* Model Mapper */
-    public User mapToUser(ValAddUserDTO valAddUserDTO) {
-        return modelMapper.map(valAddUserDTO, User.class);
-    }
-
-    public User mapToUser(LoginDTO loginDTO) {
-        return modelMapper.map(loginDTO, User.class);
-    }
+//    @Autowired
+//    UserRepo repo;
+//
+//    BcryptCustom bcrypt = new BcryptCustom(12);
+//
+//    @Autowired
+//    private ModelMapper modelMapper;
+//
+//    private Crypto crypto = new Crypto();
+//
+//    /* Regis service */
+//    public ResponseEntity<Object> addUser(User user, HttpServletRequest request) {
+//        if (user == null) {
+//            return new ResponseHandler().handleResponse("Email Tidak Ditemukan !!", HttpStatus.BAD_REQUEST, null, "AUT001", request);
+//        }
+//
+//        if (user.getEmail() == null) {
+//            return new ResponseHandler().handleResponse("Email Tidak Ditemukan !!", HttpStatus.BAD_REQUEST, null, "AUT002", request);
+//        }
+//
+//        Map<String, Object> m = new HashMap<>();
+//
+//        try {
+//            user.setPassword(bcrypt.hash(user.getPassword() + user.getEmail()));
+//            repo.save(user);
+//
+//        } catch (Exception e) {
+//            return new ResponseHandler().handleResponse("Server Tidak Dapat Memproses !!", HttpStatus.INTERNAL_SERVER_ERROR, null, "AUT00FE001", request);
+//        }
+//        return new ResponseHandler().handleResponse("Registrasi berhasil", HttpStatus.OK, m, null, request);
+//    }
+//
+//
+//    /* Login service */
+//    public ResponseEntity<Object> login(User user, HttpServletRequest request) {
+//        Map<String, Object> m = new HashMap<>();
+//        User userNext = null;
+//        try {
+//            String userEmail = user.getEmail();
+//            Optional<User> opUser = repo.findByEmail(userEmail);
+//
+//            if (!opUser.isPresent()) {
+//                return new ResponseHandler().handleResponse("User Tidak Ditemukan", HttpStatus.BAD_REQUEST, null, "AUT011", request);
+//            }
+//
+//            userNext = opUser.get();
+//
+//            if (!bcrypt.verifyHash(user.getPassword() + user.getEmail(), userNext.getPassword())) {
+//                return new ResponseHandler().handleResponse("Username atau Password Salah !!", HttpStatus.BAD_REQUEST, null, "AUT012", request);
+//            }
+//        } catch (Exception e) {
+//            return new ResponseHandler().handleResponse("Terjadi Kesalahan Pada Server", HttpStatus.INTERNAL_SERVER_ERROR, null,
+//                    "AUT013", request);
+//        }
+//
+//        /* Ini perlu buat menu dan token JWT */
+//
+//        return new ResponseHandler().handleResponse("Login Berhasil !!", HttpStatus.OK, m, null, request);
+//    }
+//
+//
+//    /* Model Mapper */
+//    public User mapToUser(ValAddUserDTO valAddUserDTO) {
+//        return modelMapper.map(valAddUserDTO, User.class);
+//    }
+//
+//    public User mapToUser(LoginDTO loginDTO) {
+//        return modelMapper.map(loginDTO, User.class);
+//    }
 }
