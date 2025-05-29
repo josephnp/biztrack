@@ -45,9 +45,7 @@ public class AuthService {
         Map<String, Object> m = new HashMap<>();
 
         try {
-            // enkripsi password doang, kalau mau aman bisa kita enkripsi + email juga
-            user.setPassword(bcrypt.hash(user.getPassword()));
-            System.out.println(user.getPassword());
+            user.setPassword(bcrypt.hash(user.getPassword() + user.getEmail()));
             repo.save(user);
 
         } catch (Exception e) {
@@ -71,8 +69,7 @@ public class AuthService {
 
             userNext = opUser.get();
 
-            String pwdDB = crypto.performDecrypt(userNext.getPassword());
-            if (!user.getPassword().equals(pwdDB)) {
+            if (!bcrypt.verifyHash(user.getPassword() + user.getEmail(), userNext.getPassword())) {
                 return new ResponseHandler().handleResponse("Username atau Password Salah !!", HttpStatus.BAD_REQUEST, null, "AUT012", request);
             }
         } catch (Exception e) {

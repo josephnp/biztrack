@@ -15,20 +15,20 @@ public class AuthController {
 
     @Autowired
     AuthService authService;
-    
+
 
     @PostMapping("/add-user")
     public ResponseEntity<Object> addNewUser(@Valid @RequestBody ValAddUserDTO valAddUserDTO, HttpServletRequest request) {
         return authService.addUser(authService.mapToUser(valAddUserDTO), request);
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<Object> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletRequest request) {
-//        return authService.login(authService.mapToUser(loginDTO), request);
-//    }
-
     @PostMapping("/login")
-    public String login() {
-        return "behasi masuk";
+    public ResponseEntity<Object> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletRequest request) {
+        return authService.login(authService.mapToUser(loginDTO), request);
     }
+
+//    @PostMapping("/login")
+//    public String login() {
+//        return "behasi masuk";
+//    }
 }
