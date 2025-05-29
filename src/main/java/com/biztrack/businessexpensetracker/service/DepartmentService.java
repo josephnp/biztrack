@@ -103,12 +103,12 @@ public class DepartmentService implements IService<Department> {
         try {
             page = departmentRepo.findAll(pageable);
             if (page.isEmpty()) {
-                return GlobalResponse.dataTidakDitemukan("AUT04FV031", request);
+                return GlobalResponse.dataTidakDitemukan("DEP04FV031", request);
             }
             listDTO = mapToDTO(page.getContent());
             data = tp.transformPagination(listDTO, page, "id", "");
         } catch (Exception e) {
-            return GlobalResponse.terjadiKesalahan("AUT04FE031", request);
+            return GlobalResponse.terjadiKesalahan("DEP04FE031", request);
         }
         return GlobalResponse.dataDitemukan(data, request);
     }

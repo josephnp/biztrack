@@ -89,7 +89,7 @@ public class StatusService implements IService<Status> {
             statusRepo.deleteById(id);
 
         } catch (Exception e) {
-            return GlobalResponse.dataGagalDihapus("DEP04FE021", request);
+            return GlobalResponse.dataGagalDihapus("STA04FE021", request);
         }
         return GlobalResponse.dataBerhasilDihapus(request);
     }
@@ -103,12 +103,12 @@ public class StatusService implements IService<Status> {
         try {
             page = statusRepo.findAll(pageable);
             if (page.isEmpty()) {
-                return GlobalResponse.dataTidakDitemukan("AUT04FV031", request);
+                return GlobalResponse.dataTidakDitemukan("STA04FV031", request);
             }
             listDTO = mapToDTO(page.getContent());
             data = tp.transformPagination(listDTO, page, "id", "");
         } catch (Exception e) {
-            return GlobalResponse.terjadiKesalahan("AUT04FE031", request);
+            return GlobalResponse.terjadiKesalahan("STA04FE031", request);
         }
         return GlobalResponse.dataDitemukan(data, request);
     }
