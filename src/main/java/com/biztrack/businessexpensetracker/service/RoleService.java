@@ -61,7 +61,7 @@ public class RoleService implements IService<Role> {
                 return GlobalResponse.objectIsNull("ROL04FV011", request);
             }
             if (role == null) {
-                return new ResponseHandler().handleResponse("Object Null !!", HttpROLtus.BAD_REQUEST, null, "DEP04FV012", request);
+//                return new ResponseHandler().handleResponse("Object Null !!", HttpROLtus.BAD_REQUEST, null, "DEP04FV012", request);
             }
             Optional<Role> opRole = roleRepo.findById(id);
             if (!opRole.isPresent()) {

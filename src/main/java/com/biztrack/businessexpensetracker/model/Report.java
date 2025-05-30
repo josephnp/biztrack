@@ -15,7 +15,7 @@ public class Report {
     @Column(name = "ID")
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(
             name = "RequestID",
             nullable = false,
