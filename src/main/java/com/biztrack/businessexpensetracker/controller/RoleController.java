@@ -1,6 +1,7 @@
 package com.biztrack.businessexpensetracker.controller;
 
 import com.biztrack.businessexpensetracker.config.OtherConfig;
+import com.biztrack.businessexpensetracker.dto.request.AssignMenuToRoleDTO;
 import com.biztrack.businessexpensetracker.dto.validation.ValRoleDTO;
 import com.biztrack.businessexpensetracker.dto.validation.ValStatusDTO;
 import com.biztrack.businessexpensetracker.service.RoleService;
@@ -41,5 +42,20 @@ public class RoleController {
     public ResponseEntity<Object> findAll(HttpServletRequest request){
         Pageable pageable = PageRequest.of(0, OtherConfig.getDefaultPaginationSize(), Sort.by("id"));
         return roleService.findAll(pageable,request);
+    }
+
+    @GetMapping("/{roleId}/menus")
+    public ResponseEntity<Object> getMenusByRoleId( @PathVariable Long roleId,
+                                                    Pageable pageable,
+                                                    HttpServletRequest request){
+        return roleService.getMenusByRoleId(roleId, pageable, request);
+    }
+
+    @PostMapping("/assign-menus")
+    public ResponseEntity<Object> assignMenusToRole(
+            @RequestBody AssignMenuToRoleDTO assignMenuToRoleDTO,
+            HttpServletRequest request
+    ) {
+        return roleService.assignMenusToRole(assignMenuToRoleDTO, request);
     }
 }
