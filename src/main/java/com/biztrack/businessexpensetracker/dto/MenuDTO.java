@@ -1,14 +1,9 @@
-package com.biztrack.businessexpensetracker.dto.report;
+package com.biztrack.businessexpensetracker.dto;
 
-import com.biztrack.businessexpensetracker.dto.MenuDTO;
-
-import java.util.List;
-
-public class RepRoleDTO {
+public class MenuDTO {
     private Long id;
     private String name;
     private String description;
-    private List<MenuDTO> menus;
 
     public Long getId() {
         return id;
@@ -32,13 +27,5 @@ public class RepRoleDTO {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public List<MenuDTO> getMenus() {
-        return menus;
-    }
-
-    public void setMenus(List<MenuDTO> menus) {
-        this.menus = menus;
     }
 }

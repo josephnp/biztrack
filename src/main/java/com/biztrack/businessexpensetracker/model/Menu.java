@@ -10,28 +10,23 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Roles")
-public class Role {
+@Table(name = "Menus")
+public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 
-    public Set<Menu> getMenus() {
-        return menus;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setMenus(Set<Menu> menus) {
-        this.menus = menus;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
-    @ManyToMany
-    @JoinTable(
-            name = "RoleMenu", // nama tabel join
-            joinColumns = @JoinColumn(name = "RoleID"),  // FK ke Role
-            inverseJoinColumns = @JoinColumn(name = "MenuID")  // FK ke Menu
-    )
-    private Set<Menu> menus = new HashSet<>();
+    @ManyToMany(mappedBy = "menus")
+    private Set<Role> roles = new HashSet<>();
 
     @Column(name = "Name", nullable = false)
     private String name;
