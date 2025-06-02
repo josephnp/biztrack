@@ -4,29 +4,36 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "MstUser")
 public class User implements UserDetails {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(
             name = "RoleID",
             nullable = false,
-            foreignKey = @ForeignKey(name = "FK_Users_Role")
+            foreignKey = @ForeignKey(name = "fk-user-role")
     )
     private Role role;
+
+    @ManyToOne
+    @JoinColumn(
+            name = "DepartmentID",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk-user-departement")
+    )
+    private Department department;
 
     @Column(name = "EmployeeNumber", length = 40, nullable = false, unique = true)
     private String employeeNumber;
@@ -37,39 +44,28 @@ public class User implements UserDetails {
     @Column(name = "Email", length = 100, nullable = false, unique = true)
     private String email;
 
-    @ManyToOne
-    @JoinColumn(
-            name = "DepartmentID",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "FK_Users_Department")
-    )
-    private Department department;
-
     @Column(name = "Password", length = 255, nullable = false)
     private String password;
 
-//    @Column(name = "CreatedBy", nullable = false, updatable = false)
-//    private UUID createdBy;
-//
-//    @CreationTimestamp
-//    @Column(name = "CreatedDate", nullable = false, updatable = false)
-//    private LocalDateTime createdDate;
-//
-//    @Column(name = "ModifiedBy", insertable = false)
-//    private UUID modifiedBy;
-//
-//    @UpdateTimestamp
-//    @Column(name = "ModifiedDate", insertable = false)
-//    private LocalDateTime modifiedDate;
+    @Column(name = "CreatedBy", nullable = false, updatable = false)
+    private Long createdBy;
 
-    @Column(name = "IsActive", nullable = false)
-    private Boolean isActive = true;
+    @CreationTimestamp
+    @Column(name = "CreatedDate", nullable = false, updatable = false)
+    private LocalDateTime createdDate;
 
-    public UUID getId() {
+    @Column(name = "ModifiedBy", insertable = false)
+    private Long modifiedBy;
+
+    @UpdateTimestamp
+    @Column(name = "ModifiedDate", insertable = false)
+    private LocalDateTime modifiedDate;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -79,6 +75,14 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public String getEmployeeNumber() {
@@ -105,15 +109,6 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-
     public String getPassword() {
         return password;
     }
@@ -121,10 +116,11 @@ public class User implements UserDetails {
     public void setPassword(String password) {
         this.password = password;
     }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
+        return grantedAuthorities;
     }
 
     @Override
@@ -152,45 +148,36 @@ public class User implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
-//    public UUID getCreatedBy() {
-//        return createdBy;
-//    }
-//
-//    public void setCreatedBy(UUID createdBy) {
-//        this.createdBy = createdBy;
-//    }
-//
-//    public LocalDateTime getCreatedDate() {
-//        return createdDate;
-//    }
-//
-//    public void setCreatedDate(LocalDateTime createdDate) {
-//        this.createdDate = createdDate;
-//    }
-//
-//    public UUID getModifiedBy() {
-//        return modifiedBy;
-//    }
-//
-//    public void setModifiedBy(UUID modifiedBy) {
-//        this.modifiedBy = modifiedBy;
-//    }
-//
-//    public LocalDateTime getModifiedDate() {
-//        return modifiedDate;
-//    }
-//
-//    public void setModifiedDate(LocalDateTime modifiedDate) {
-//        this.modifiedDate = modifiedDate;
-//    }
-
-    public Boolean getActive() {
-        return isActive;
+    public Long getCreatedBy() {
+        return createdBy;
     }
 
-    public void setActive(Boolean active) {
-        isActive = active;
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
     }
 
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Long getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(Long modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public LocalDateTime getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(LocalDateTime modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
 
 }
