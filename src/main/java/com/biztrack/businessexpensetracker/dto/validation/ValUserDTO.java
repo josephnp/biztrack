@@ -1,15 +1,17 @@
 package com.biztrack.businessexpensetracker.dto.validation;
 
-import com.biztrack.businessexpensetracker.model.Department;
-import com.biztrack.businessexpensetracker.model.Role;
+import com.biztrack.businessexpensetracker.dto.rel.RelDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public class ValAddUserDTO {
+public class ValUserDTO {
 
     @NotBlank(message = "Name can't be blank")
     @NotEmpty(message = "Name can't be empty")
+    @JsonProperty("full-name")
     private String fullName;
 
     @NotBlank(message = "Email can't be blank")
@@ -19,17 +21,15 @@ public class ValAddUserDTO {
 
     // employee number example: EMP0001
     @Pattern(regexp = "^EMP[0-9]{4}$", message = "Employee Number is not  valid")
+    @JsonProperty("employee-number")
     private String employeeNumber;
 
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@_#\\-$])[\\w].{8,15}$",
-            message = "Password format is not valid")
-    private String password;
+    @NotNull(message = "Relasi Tidak Boleh Kosong")
+    private RelDTO department;
 
-    private Department department;
+    @NotNull(message = "Relasi Tidak Boleh Kosong")
+    private RelDTO role;
 
-    private Role role;
-
-    private boolean isActive = true;
 
     public String getFullName() {
         return fullName;
@@ -55,35 +55,20 @@ public class ValAddUserDTO {
         this.employeeNumber = employeeNumber;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Department getDepartment() {
+    public RelDTO getDepartment() {
         return department;
     }
 
-    public void setDepartment(Department department) {
+    public void setDepartment(RelDTO department) {
         this.department = department;
     }
 
-    public Role getRole() {
+    public RelDTO getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(RelDTO role) {
         this.role = role;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
 }

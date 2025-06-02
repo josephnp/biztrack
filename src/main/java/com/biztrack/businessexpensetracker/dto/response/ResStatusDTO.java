@@ -1,6 +1,6 @@
-package com.biztrack.businessexpensetracker.dto.report;
+package com.biztrack.businessexpensetracker.dto.response;
 
-public class RepRoleDTO {
+public class ResStatusDTO {
     private Long id;
     private String name;
     private String description;
