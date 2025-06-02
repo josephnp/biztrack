@@ -22,16 +22,18 @@ public class ResponseHandler {
             HttpServletRequest request
     ) {
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", message);
-        response.put("data", data == null ? "" : data);
-        response.put("timestamp", LocalDateTime.now().toString());
-        response.put("success", !status.isError());
+        Map<String, Object> m = new HashMap<>();
+        m.put("message", message);
+//        m.put("status",status.value());
+        m.put("data", data == null ? "" : data);
+        m.put("timestamp", LocalDateTime.now().toString());
+        m.put("success", !status.isError());
         if (errorCode != null) {
-            response.put("error-code", errorCode);
-            response.put("path", request.getRequestURI());
+            m.put("error-code", errorCode);
+            m.put("path", request.getRequestURI());
+//            m.put("path",request.getPathInfo());
         }
-        return new ResponseEntity<>(response, status);
+        return new ResponseEntity<>(m, status);
     }
 
     public ResponseEntity<Object> handleResponse(
@@ -42,15 +44,16 @@ public class ResponseHandler {
             WebRequest request
     ) {
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", message);
-        response.put("data", data == null ? "" : data);
-        response.put("timestamp", LocalDateTime.now().toString());
-        response.put("success", !status.isError());
+        Map<String, Object> m = new HashMap<>();
+        m.put("message", message);
+//        m.put("status",status.value());
+        m.put("data", data == null ? "" : data);
+        m.put("timestamp", LocalDateTime.now().toString());
+        m.put("success", !status.isError());
         if (errorCode != null) {
-            response.put("error-code", errorCode);
-            response.put("path", request.getContextPath());
+            m.put("error-code", errorCode);
+            m.put("path", request.getContextPath());
         }
-        return new ResponseEntity<>(response, status);
+        return new ResponseEntity<>(m, status);
     }
 }

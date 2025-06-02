@@ -1,14 +1,17 @@
-package com.biztrack.businessexpensetracker.dto.validation;
+package com.biztrack.businessexpensetracker.dto.report;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-
-public class ValDepartmentDTO {
-    @NotEmpty(message = "Name can't be empty")
+public class RepMenuDTO {
+    private Long id;
     private String name;
-
-    @NotEmpty(message = "Name can't be empty")
     private String description;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
