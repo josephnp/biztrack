@@ -1,5 +1,6 @@
 package com.biztrack.businessexpensetracker.config;
 
+import com.biztrack.businessexpensetracker.security.BcryptCustom;
 import com.biztrack.businessexpensetracker.security.Crypto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +36,10 @@ public class MainConfig {
     @Bean
     public ModelMapper getModelMapper(){
         return new ModelMapper();
+    }
+
+    @Bean
+    public BcryptCustom getBcryptCustom(){
+        return new BcryptCustom(12);
     }
 }
