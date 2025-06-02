@@ -2,7 +2,6 @@ package com.biztrack.businessexpensetracker.service;
 
 import com.biztrack.businessexpensetracker.config.JwtConfig;
 import com.biztrack.businessexpensetracker.dto.validation.LoginDTO;
-import com.biztrack.businessexpensetracker.dto.validation.ValAddUserDTO;
 import com.biztrack.businessexpensetracker.handler.ResponseHandler;
 import com.biztrack.businessexpensetracker.model.User;
 import com.biztrack.businessexpensetracker.repo.UserRepo;
@@ -25,12 +24,16 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class AuthService implements UserDetailsService {
+public class
+AuthService
+implements UserDetailsService
+ {
 
     @Autowired
-    UserRepo repo;
+    private UserRepo userRepo;
 
-    BcryptCustom bcrypt = new BcryptCustom(12);
+    @Autowired
+    private BcryptCustom bcrypt;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -38,37 +41,14 @@ public class AuthService implements UserDetailsService {
     @Autowired
     private JwtUtility jwtUtility;
 
+    // Login service
 
-    /* Regis service */
-    public ResponseEntity<Object> addUser(User user, HttpServletRequest request) {
-        if (user == null) {
-            return new ResponseHandler().handleResponse("Email Tidak Ditemukan !!", HttpStatus.BAD_REQUEST, null, "AUT001", request);
-        }
-
-        if (user.getEmail() == null) {
-            return new ResponseHandler().handleResponse("Email Tidak Ditemukan !!", HttpStatus.BAD_REQUEST, null, "AUT002", request);
-        }
-
-        Map<String, Object> m = new HashMap<>();
-
-        try {
-            user.setPassword(bcrypt.hash(user.getPassword() + user.getEmail()));
-            repo.save(user);
-
-        } catch (Exception e) {
-            return new ResponseHandler().handleResponse("Server Tidak Dapat Memproses !!", HttpStatus.INTERNAL_SERVER_ERROR, null, "AUT00FE001", request);
-        }
-        return new ResponseHandler().handleResponse("Registrasi berhasil", HttpStatus.OK, m, null, request);
-    }
-
-
-    /* Login service */
     public ResponseEntity<Object> login(User user, HttpServletRequest request) {
-        Map<String, Object> m = new HashMap<>();
-        User userNext = null;
+        Map<String, Object> data = new HashMap<>();
+        User userNext;
         try {
             String userEmail = user.getEmail();
-            Optional<User> opUser = repo.findByEmail(userEmail);
+            Optional<User> opUser = userRepo.findByEmail(userEmail);
 
             if (!opUser.isPresent()) {
                 return new ResponseHandler().handleResponse("User Tidak Ditemukan", HttpStatus.BAD_REQUEST, null, "AUT011", request);
@@ -80,47 +60,40 @@ public class AuthService implements UserDetailsService {
                 return new ResponseHandler().handleResponse("Username atau Password Salah !!", HttpStatus.BAD_REQUEST, null, "AUT012", request);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return new ResponseHandler().handleResponse("Terjadi Kesalahan Pada Server", HttpStatus.INTERNAL_SERVER_ERROR, null,
                     "AUT013", request);
         }
 
-        /* Ini perlu buat menu dan token JWT */
-        Map<String, Object> mapData = new HashMap<>();
-        mapData.put("em", user.getEmail());
-//        mapData.put("id", user.getId());
-//        mapData.put("emp", user.getEmployeeNumber());
-//        mapData.put("dep", user.getDepartment());
-//        mapData.put("rol", user.getRole());
-//        mapData.put("fn", user.getFullName());
-        String token = jwtUtility.generateToken(mapData, user.getEmail());
+        // Ini perlu buat menu dan token JWT
+
+        Map<String, Object> tokenData = new HashMap<>();
+        tokenData.put("email", userNext.getEmail());
+        tokenData.put("id", userNext.getId());
+        tokenData.put("employeeNumber", userNext.getEmployeeNumber());
+        tokenData.put("fullName", userNext.getFullName());
+        String token = jwtUtility.generateToken(tokenData, user.getEmail());
 
         if (JwtConfig.getTokenEncryptEnable().equals("y")) {
             token = Crypto.performEncrypt(token);
         }
 
-        m.put("token", token);
-        System.out.println(bcrypt.hash("P@sword1!" + "admin@example.com"));
-        return new ResponseHandler().handleResponse("Login Berhasil !!", HttpStatus.OK, m, null, request);
+        data.put("token", token);
+        return new ResponseHandler().handleResponse("Login Berhasil !!", HttpStatus.OK, data, null, request);
     }
 
-
-    /* Model Mapper */
-    public User mapToUser(ValAddUserDTO valAddUserDTO) {
-        return modelMapper.map(valAddUserDTO, User.class);
-    }
 
     public User mapToUser(LoginDTO loginDTO) {
         return modelMapper.map(loginDTO, User.class);
     }
 
-    @Override
+@Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> opUser = repo.findByEmail(username);
+        Optional<User> opUser = userRepo.findByEmail(username);
         if (!opUser.isPresent()) {
             throw new UsernameNotFoundException("Username atau Password Salah !!!");
         }
         User user = opUser.get();
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
+
 }
