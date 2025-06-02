@@ -1,11 +1,11 @@
 package com.biztrack.businessexpensetracker.service;
 
 import com.biztrack.businessexpensetracker.core.IService;
-import com.biztrack.businessexpensetracker.dto.report.RepRoleDTO;
+import com.biztrack.businessexpensetracker.dto.response.ResRoleDTO;
 import com.biztrack.businessexpensetracker.dto.validation.ValRoleDTO;
-import com.biztrack.businessexpensetracker.handler.ResponseHandler;
 import com.biztrack.businessexpensetracker.model.Role;
 import com.biztrack.businessexpensetracker.repo.RoleRepo;
+import com.biztrack.businessexpensetracker.utils.GlobalFunction;
 import com.biztrack.businessexpensetracker.utils.GlobalResponse;
 import com.biztrack.businessexpensetracker.utils.TransformPagination;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Kode Platform / Aplikasi : BIZ
+ * Kode Modul : 01
+ * Kode Validation / Error  : FV - FE
+ */
+
 @Service
 @Transactional
 public class RoleService implements IService<Role> {
@@ -36,89 +42,98 @@ public class RoleService implements IService<Role> {
     @Autowired
     private TransformPagination tp;
 
+    // 001 - 010
     @Override
     public ResponseEntity<Object> save(Role role, HttpServletRequest request) {
         try {
+            Map<String,Object> tokenData = GlobalFunction.extractToken(request);
+            if (role == null) {
+                return GlobalResponse.objectIsNull("BIZ01FV001", request);
+            }
+
             Optional<Role> opRole = roleRepo.findByName(role.getName());
             if (opRole.isPresent()) {
-                return new ResponseHandler().handleResponse("Data Already Exist !!", HttpStatus.BAD_REQUEST, null, "ROL04FV001", request);
+                return GlobalResponse.dataExists("BIZ01FV002", request);
             }
-            if (role == null) {
-                return new ResponseHandler().handleResponse("Object Null !!", HttpStatus.BAD_REQUEST, null, "ROL04FV002", request);
-            }
+
+            role.setCreatedBy(Long.parseLong(tokenData.get("id").toString()));
             roleRepo.save(role);
 
         } catch (Exception e) {
-            return GlobalResponse.dataGagalDisimpan("ROL04FE001", request);
+            return GlobalResponse.somethingWrong("BIZ01FE001", request);
         }
-        return GlobalResponse.dataBerhasilDisimpan(request);
+        return GlobalResponse.savingSuccess(request);
     }
 
+    // 011 - 020
     @Override
     public ResponseEntity<Object> update(Long id, Role role, HttpServletRequest request) {
         try {
+            Map<String,Object> tokenData = GlobalFunction.extractToken(request);
             if (id == null) {
-                return GlobalResponse.objectIsNull("ROL04FV011", request);
+                return GlobalResponse.objectIsNull("BIZ01FV011", request);
             }
             if (role == null) {
-                return new ResponseHandler().handleResponse("Object Null !!", HttpROLtus.BAD_REQUEST, null, "DEP04FV012", request);
+                return GlobalResponse.objectIsNull("BIZ01FV012", request);
             }
             Optional<Role> opRole = roleRepo.findById(id);
             if (!opRole.isPresent()) {
-                return GlobalResponse.dataTidakDitemukan("ROL04FV013", request);
+                return GlobalResponse.dataNotFound("BIZ01FV013", request);
             }
             Role roleDB = opRole.get();
             roleDB.setName(role.getName());
             roleDB.setDescription(role.getDescription());
+            roleDB.setModifiedBy(Long.parseLong(tokenData.get("id").toString()));
         } catch (Exception e) {
-            return GlobalResponse.dataGagalDiubah("ROL04FE002", request);
+            return GlobalResponse.somethingWrong("BIZ01FE011", request);
         }
-        return GlobalResponse.dataBerhasilDiubah(request);
+        return GlobalResponse.updatedSuccess(request);
     }
 
+    // 021 - 030
     @Override
     public ResponseEntity<Object> delete(Long id, HttpServletRequest request) {
         try {
             if (id == null) {
-                return GlobalResponse.objectIsNull("ROL04FV021", request);
+                return GlobalResponse.objectIsNull("BIZ01FV021", request);
             }
             Optional<Role> opRole = roleRepo.findById(id);
             if (!opRole.isPresent()) {
-                return GlobalResponse.dataTidakDitemukan("ROL04FV022", request);
+                return GlobalResponse.dataNotFound("BIZ01FV022", request);
             }
             roleRepo.deleteById(id);
 
         } catch (Exception e) {
-            return GlobalResponse.dataGagalDihapus("ROL04FE021", request);
+            return GlobalResponse.somethingWrong("BIZ01FE021", request);
         }
-        return GlobalResponse.dataBerhasilDihapus(request);
+        return GlobalResponse.deletedSuccess(request);
     }
 
+    // 031 - 040
     @Override
     public ResponseEntity<Object> findAll(Pageable pageable, HttpServletRequest request) {
-        Page<Role> page = null;
-        List<Role> list = null;
-        List<RepRoleDTO> listDTO = null;
-        Map<String, Object> data = null;
+        Page<Role> page;
+        List<ResRoleDTO> listDTO;
+        Map<String, Object> data;
         try {
             page = roleRepo.findAll(pageable);
             if (page.isEmpty()) {
-                return GlobalResponse.dataTidakDitemukan("ROL04FV031", request);
+                return GlobalResponse.dataNotFound("BIZ01FV031", request);
             }
             listDTO = mapToDTO(page.getContent());
             data = tp.transformPagination(listDTO, page, "id", "");
         } catch (Exception e) {
-            return GlobalResponse.terjadiKesalahan("ROL04FE031", request);
+            return GlobalResponse.somethingWrong("BIZ01FE031", request);
         }
-        return GlobalResponse.dataDitemukan(data, request);
+        return GlobalResponse.foundData(data, request);
     }
 
     public Role mapToRole(ValRoleDTO valRoleDTO) {
         return modelMapper.map(valRoleDTO, Role.class);
     }
 
-    public List<RepRoleDTO> mapToDTO(List<Role> listRole) {
-        return modelMapper.map(listRole, new TypeToken<List<RepRoleDTO>>() {
+    public List<ResRoleDTO> mapToDTO(List<Role> listRole) {
+        return modelMapper.map(listRole, new TypeToken<List<ResRoleDTO>>() {
         }.getType());
     }
 
