@@ -6,6 +6,7 @@
 //import java.time.LocalDateTime;
 //import java.util.UUID;
 //
+//
 //@Entity
 //@Table(name = "AccessMenu")
 //public class AccessMenu {
@@ -18,8 +19,9 @@
 //    @JoinColumn(name = "RoleID", nullable = false, foreignKey = @ForeignKey(name = "FK_AccessMenus_Role"))
 //    private Role roleId;
 //
-//    @Column(name = "Menu")
-//    private String menu;
+//    @ManyToOne
+//    @JoinColumn(name = "MenuID", nullable = false, foreignKey = @ForeignKey(name = "FK_AccessMenus_Menu"))
+//    private Menu menuId;
 //
 //    @Column(name = "CreatedBy", nullable = false, updatable = false)
 //    private UUID createdBy;
@@ -50,12 +52,12 @@
 //        this.roleId = roleId;
 //    }
 //
-//    public String getMenu() {
-//        return menu;
+//    public Menu getMenu() {
+//        return menuId;
 //    }
 //
-//    public void setMenu(String menu) {
-//        this.menu = menu;
+//    public void setMenu(Menu menu) {
+//        this.menuId = menu;
 //    }
 //
 //    public UUID getCreatedBy() {

@@ -15,4 +15,5 @@ public interface IService<T> {
     public ResponseEntity<Object> delete(Long id, HttpServletRequest request);
 
     public ResponseEntity<Object> findAll(Pageable pageable, HttpServletRequest request);
+
 }

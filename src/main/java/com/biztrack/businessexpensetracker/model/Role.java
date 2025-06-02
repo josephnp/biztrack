@@ -5,14 +5,32 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "MstRole")
+@Table(name = "Roles")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
+
+//    public Set<Menu> getMenus() {
+//        return menus;
+//    }
+//
+//    public void setMenus(Set<Menu> menus) {
+//        this.menus = menus;
+//    }
+//
+//    @ManyToMany
+//    @JoinTable(
+//            name = "RoleMenu", // nama tabel join
+//            joinColumns = @JoinColumn(name = "RoleID"),  // FK ke Role
+//            inverseJoinColumns = @JoinColumn(name = "MenuID")  // FK ke Menu
+//    )
+//    private Set<Menu> menus = new HashSet<>();
 
     @Column(name = "Name", nullable = false)
     private String name;
