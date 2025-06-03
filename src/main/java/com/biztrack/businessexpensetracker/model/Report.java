@@ -5,10 +5,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
 
 @Entity
-@Table(name = "Report")
+@Table(name = "Reports")
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,16 +19,9 @@ public class Report {
     @JoinColumn(
             name = "RequestID",
             nullable = false,
-            foreignKey = @ForeignKey(name = "fk-report-request")
+            foreignKey = @ForeignKey(name = "FK_Report_Requests")
     )
     private Request request;
-
-    @ManyToOne
-    @JoinColumn(name = "StatusID",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk-report-status")
-    )
-    private Status status;
 
     @Column(name = "Amount")
     private Double amount;
@@ -39,25 +32,26 @@ public class Report {
     @Column(name = "RefundReceiptUrl")
     private String refundReceiptURL;
 
+    @ManyToOne
+    @JoinColumn(name = "StatusID", nullable = false, foreignKey = @ForeignKey(name = "FK_Report_Status"))
+    private Status status;
+
     @Column(name = "Comment")
     private String comment;
 
     @Column(name = "CreatedBy", nullable = false, updatable = false)
-    private Long createdBy;
+    private UUID createdBy;
 
     @CreationTimestamp
     @Column(name = "CreatedDate", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
     @Column(name = "ModifiedBy", insertable = false)
-    private Long modifiedBy;
+    private UUID modifiedBy;
 
     @UpdateTimestamp
     @Column(name = "ModifiedDate", insertable = false)
     private LocalDateTime modifiedDate;
-
-    @OneToMany(mappedBy = "report")
-    private List<ReportDetail> reportDetails;
 
     public Long getId() {
         return id;
@@ -73,14 +67,6 @@ public class Report {
 
     public void setRequest(Request request) {
         this.request = request;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     public Double getAmount() {
@@ -107,6 +93,14 @@ public class Report {
         this.refundReceiptURL = refundReceiptURL;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public String getComment() {
         return comment;
     }
@@ -115,11 +109,11 @@ public class Report {
         this.comment = comment;
     }
 
-    public Long getCreatedBy() {
+    public UUID getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(UUID createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -131,11 +125,11 @@ public class Report {
         this.createdDate = createdDate;
     }
 
-    public Long getModifiedBy() {
+    public UUID getModifiedBy() {
         return modifiedBy;
     }
 
-    public void setModifiedBy(Long modifiedBy) {
+    public void setModifiedBy(UUID modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
 
@@ -145,13 +139,5 @@ public class Report {
 
     public void setModifiedDate(LocalDateTime modifiedDate) {
         this.modifiedDate = modifiedDate;
-    }
-
-    public List<ReportDetail> getReportDetails() {
-        return reportDetails;
-    }
-
-    public void setReportDetails(List<ReportDetail> reportDetails) {
-        this.reportDetails = reportDetails;
     }
 }

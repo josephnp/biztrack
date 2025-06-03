@@ -6,7 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 
-public class ValUserDTO {
+public class ValAddUserDTO {
+
     @NotBlank(message = "Name can't be blank")
     @NotEmpty(message = "Name can't be empty")
     private String fullName;

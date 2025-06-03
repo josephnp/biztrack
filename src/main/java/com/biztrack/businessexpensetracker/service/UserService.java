@@ -1,12 +1,19 @@
 package com.biztrack.businessexpensetracker.service;
 
 import com.biztrack.businessexpensetracker.core.IService;
-import com.biztrack.businessexpensetracker.dto.response.ResUserDTO;
+import com.biztrack.businessexpensetracker.dto.report.RepStatusDTO;
+import com.biztrack.businessexpensetracker.dto.report.RepUserDTO;
+import com.biztrack.businessexpensetracker.dto.validation.ValStatusDTO;
 import com.biztrack.businessexpensetracker.dto.validation.ValUserDTO;
+import com.biztrack.businessexpensetracker.handler.ResponseHandler;
+import com.biztrack.businessexpensetracker.model.Department;
+import com.biztrack.businessexpensetracker.model.Role;
+import com.biztrack.businessexpensetracker.model.Status;
 import com.biztrack.businessexpensetracker.model.User;
+import com.biztrack.businessexpensetracker.repo.DepartmentRepo;
+import com.biztrack.businessexpensetracker.repo.RoleRepo;
 import com.biztrack.businessexpensetracker.repo.UserRepo;
-import com.biztrack.businessexpensetracker.security.BcryptCustom;
-import com.biztrack.businessexpensetracker.utils.GlobalFunction;
+import com.biztrack.businessexpensetracker.security.BcryptImpl;
 import com.biztrack.businessexpensetracker.utils.GlobalResponse;
 import com.biztrack.businessexpensetracker.utils.TransformPagination;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,149 +22,140 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
-/**
- * Kode Platform / Aplikasi : BIZ
- * Kode Modul : 03
- * Kode Validation / Error  : FV - FE
- */
-
-@Service
-@Transactional
 public class UserService implements IService<User> {
     @Autowired
     private UserRepo userRepo;
 
     @Autowired
+    private RoleRepo roleRepo;
+
+    @Autowired
+    private DepartmentRepo departmentRepo;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
-    private BcryptCustom bcryptCustom;
-
-    @Autowired
     private TransformPagination tp;
-
-    // 001 - 010
+    
     @Override
     public ResponseEntity<Object> save(User user, HttpServletRequest request) {
-        try {
-            Map<String,Object> tokenData = GlobalFunction.extractToken(request);
-            if (user == null) {
-                return GlobalResponse.objectIsNull("BIZ03FV001", request);
+        try{
+            if(user == null){
+                return new ResponseHandler().handleResponse("Object Null !!", HttpStatus.BAD_REQUEST,null,"AUT04FV001",request);
             }
-
-            user.setPassword(bcryptCustom.hash("Password@1234" + user.getEmail()));
-            user.setCreatedBy(Long.parseLong(tokenData.get("id").toString()));
+            user.setPassword(BcryptImpl.hash(user.getUsername()+user.getPassword()));
             userRepo.save(user);
-
-        } catch (Exception e) {
-            return GlobalResponse.somethingWrong("BIZ03FE001", request);
+        }catch (Exception e){
+            return GlobalResponse.dataGagalDisimpan("AUT04FE001",request);
         }
-        return GlobalResponse.savingSuccess(request);
+        return GlobalResponse.dataBerhasilDisimpan(request);
     }
 
-    // 011 - 020
     @Override
     public ResponseEntity<Object> update(Long id, User user, HttpServletRequest request) {
-        try {
-            Map<String,Object> tokenData = GlobalFunction.extractToken(request);
-            if (id == null) {
-                return GlobalResponse.objectIsNull("BIZ03FV011", request);
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Object> delete(Long id, HttpServletRequest request) {
+        return null;
+    }
+
+
+    public ResponseEntity<Object> update(UUID id, User user, HttpServletRequest request) {
+        try{
+            if(id == null){
+                return GlobalResponse.objectIsNull("AUT04FV011",request);
             }
-            if (user == null) {
-                return GlobalResponse.objectIsNull("BIZ03FV012", request);
+            if(user == null){
+                return GlobalResponse.objectIsNull("AUT04FV012",request);
             }
             Optional<User> opUser = userRepo.findById(id);
-            if (!opUser.isPresent()) {
-                return GlobalResponse.dataNotFound("BIZ03FV013", request);
+            if(!opUser.isPresent()){
+                return GlobalResponse.dataTidakDitemukan("AUT04FV013",request);
             }
 
+            Long roleId = user.getRole().getId();
+            Optional<Role> opRole = roleRepo.findById(roleId);
+            if (!opRole.isPresent()) {
+                return GlobalResponse.dataTidakDitemukan("AUT04FV014", request); // Role tidak ditemukan
+            }
+            Role role = opRole.get();
+
+            Long departmentId = user.getDepartment().getId();
+            Optional<Department> opDept = departmentRepo.findById(departmentId);
+            if (!opDept.isPresent()) {
+                return GlobalResponse.dataTidakDitemukan("AUT04FV015", request); // Department tidak ditemukan
+            }
+            Department department = opDept.get();
+
             User userDB = opUser.get();
-            userDB.setRole(user.getRole());
-            userDB.setDepartment(user.getDepartment());
             userDB.setEmployeeNumber(user.getEmployeeNumber());
             userDB.setFullName(user.getFullName());
             userDB.setEmail(user.getEmail());
-            userDB.setModifiedBy(Long.parseLong(tokenData.get("id").toString()));
+            userDB.setDepartment(department);
+            userDB.setRole(role);
+            userDB.setPassword(BcryptImpl.hash(user.getPassword()));
 
-        } catch (Exception e) {
-            return GlobalResponse.somethingWrong("BIZ03FE011", request);
+            userRepo.save(userDB);
+        }catch (Exception e){
+            return GlobalResponse.dataGagalDiubah("AUT04FE011",request);
         }
-        return GlobalResponse.updatedSuccess(request);
+        return GlobalResponse.dataBerhasilDiubah(request);
     }
 
-    // 021 - 030
-    @Override
-    public ResponseEntity<Object> delete(Long id, HttpServletRequest request) {
+
+    public ResponseEntity<Object> delete(UUID id, HttpServletRequest request) {
         try {
             if (id == null) {
-                return GlobalResponse.objectIsNull("BIZ03FV021", request);
+                return GlobalResponse.objectIsNull("STA04FV021", request);
             }
             Optional<User> opUser = userRepo.findById(id);
             if (!opUser.isPresent()) {
-                return GlobalResponse.dataNotFound("BIZ03FV022", request);
+                return GlobalResponse.dataTidakDitemukan("DEP04FV022", request);
             }
             userRepo.deleteById(id);
+
         } catch (Exception e) {
-            return GlobalResponse.somethingWrong("BIZ03FE021", request);
+            return GlobalResponse.dataGagalDihapus("STA04FE021", request);
         }
-        return GlobalResponse.deletedSuccess(request);
+        return GlobalResponse.dataBerhasilDihapus(request);
     }
 
-    // 031 -040
     @Override
     public ResponseEntity<Object> findAll(Pageable pageable, HttpServletRequest request) {
-        Page<User> page;
-        List<ResUserDTO> listDTO;
-        Map<String, Object> data;
+        Page<User> page = null;
+        List<User> list = null;
+        List<RepUserDTO> listDTO = null;
+        Map<String, Object> data = null;
         try {
             page = userRepo.findAll(pageable);
             if (page.isEmpty()) {
-                return GlobalResponse.dataNotFound("BIZ03FV031", request);
+                return GlobalResponse.dataTidakDitemukan("STA04FV031", request);
             }
             listDTO = mapToDTO(page.getContent());
             data = tp.transformPagination(listDTO, page, "id", "");
         } catch (Exception e) {
-            return GlobalResponse.somethingWrong("BIZ03FE031", request);
+            return GlobalResponse.terjadiKesalahan("STA04FE031", request);
         }
-        return GlobalResponse.foundData(data, request);
+        return GlobalResponse.dataDitemukan(data, request);
+    }
+
+    public List<RepUserDTO> mapToDTO(List<User> listUser) {
+        return modelMapper.map(listUser, new TypeToken<List<RepUserDTO>>() {
+        }.getType());
     }
 
     public User mapToUser(ValUserDTO valUserDTO) {
         return modelMapper.map(valUserDTO, User.class);
-    }
-
-    public List<ResUserDTO> mapToDTO(List<User> listUser) {
-        return modelMapper.map(listUser, new TypeToken<List<ResUserDTO>>() {
-        }.getType());
-    }
-
-    // 041 - 050
-    public ResponseEntity<Object> changePassword(Long id, String password, HttpServletRequest request) {
-        try {
-            if (id == null) {
-                return GlobalResponse.objectIsNull("BIZ03FV041", request);
-            }
-            if (password == null) {
-                return GlobalResponse.objectIsNull("BIZ03FV042", request);
-            }
-            Optional<User> opUser = userRepo.findById(id);
-            if (!opUser.isPresent()) {
-                return GlobalResponse.dataNotFound("BIZ03FV043", request);
-            }
-
-            User userDB = opUser.get();
-            userDB.setPassword(bcryptCustom.hash(password + userDB.getEmail()));
-        } catch (Exception e) {
-            return GlobalResponse.somethingWrong("BIZ03FE041", request);
-        }
-        return GlobalResponse.updatedSuccess(request);
     }
 }

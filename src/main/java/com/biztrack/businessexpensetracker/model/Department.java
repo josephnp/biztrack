@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Department")
+@Table(name = "Departments")
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,19 +21,19 @@ public class Department {
     @Column(name = "Description")
     private String description;
 
-    @Column(name = "CreatedBy", nullable = false, updatable = false)
-    private Long createdBy;
-
-    @CreationTimestamp
-    @Column(name = "CreatedDate", nullable = false, updatable = false)
-    private LocalDateTime createdDate;
-
-    @Column(name = "ModifiedBy", insertable = false)
-    private Long modifiedBy;
-
-    @UpdateTimestamp
-    @Column(name = "ModifiedDate", insertable = false)
-    private LocalDateTime modifiedDate;
+//    @Column(name = "CreatedBy", nullable = false, updatable = false)
+//    private UUID createdBy;
+//
+//    @CreationTimestamp
+//    @Column(name = "CreatedDate", nullable = false, updatable = false)
+//    private LocalDateTime createdDate;
+//
+//    @Column(name = "ModifiedBy", insertable = false)
+//    private UUID modifiedBy;
+//
+//    @UpdateTimestamp
+//    @Column(name = "ModifiedDate", insertable = false)
+//    private LocalDateTime modifiedDate;
 
     public Long getId() {
         return id;
@@ -59,35 +59,35 @@ public class Department {
         this.description = description;
     }
 
-    public Long getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Long getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public void setModifiedBy(Long modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
-
-    public LocalDateTime getModifiedDate() {
-        return modifiedDate;
-    }
-
-    public void setModifiedDate(LocalDateTime modifiedDate) {
-        this.modifiedDate = modifiedDate;
-    }
+//    public UUID getCreatedBy() {
+//        return createdBy;
+//    }
+//
+//    public void setCreatedBy(UUID createdBy) {
+//        this.createdBy = createdBy;
+//    }
+//
+//    public LocalDateTime getCreatedDate() {
+//        return createdDate;
+//    }
+//
+//    public void setCreatedDate(LocalDateTime createdDate) {
+//        this.createdDate = createdDate;
+//    }
+//
+//    public UUID getModifiedBy() {
+//        return modifiedBy;
+//    }
+//
+//    public void setModifiedBy(UUID modifiedBy) {
+//        this.modifiedBy = modifiedBy;
+//    }
+//
+//    public LocalDateTime getModifiedDate() {
+//        return modifiedDate;
+//    }
+//
+//    public void setModifiedDate(LocalDateTime modifiedDate) {
+//        this.modifiedDate = modifiedDate;
+//    }
 }
