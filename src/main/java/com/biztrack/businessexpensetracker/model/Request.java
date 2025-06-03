@@ -5,10 +5,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
 
 @Entity
-@Table(name = "Request")
+@Table(name = "Requests")
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,19 +19,13 @@ public class Request {
     @JoinColumn(
             name = "UserID",
             nullable = false,
-            foreignKey = @ForeignKey(name = "fk-request-user")
+            foreignKey = @ForeignKey(name = "FK_Requests_User")
     )
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "StatusID",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk-request-status")
-    )
-    private Status status;
-
     @Column(name = "Purpose", length = 100, nullable = false)
     private String purpose;
+
 
     @Column(name = "Amount")
     private Double amount;
@@ -42,25 +36,26 @@ public class Request {
     @Column(name = "Description")
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name = "StatusID", nullable = false, foreignKey = @ForeignKey(name = "FK_Request_Status"))
+    private Status status;
+
     @Column(name = "Comment")
     private String comment;
 
     @Column(name = "CreatedBy", nullable = false, updatable = false)
-    private Long createdBy;
+    private UUID createdBy;
 
     @CreationTimestamp
     @Column(name = "CreatedDate", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
     @Column(name = "ModifiedBy", insertable = false)
-    private Long modifiedBy;
+    private UUID modifiedBy;
 
     @UpdateTimestamp
     @Column(name = "ModifiedDate", insertable = false)
     private LocalDateTime modifiedDate;
-
-    @OneToMany(mappedBy = "request")
-    private List<RequestDetail> requestDetails;
 
     public Long getId() {
         return id;
@@ -76,14 +71,6 @@ public class Request {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     public String getPurpose() {
@@ -118,6 +105,14 @@ public class Request {
         this.description = description;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public String getComment() {
         return comment;
     }
@@ -126,11 +121,11 @@ public class Request {
         this.comment = comment;
     }
 
-    public Long getCreatedBy() {
+    public UUID getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(UUID createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -142,11 +137,11 @@ public class Request {
         this.createdDate = createdDate;
     }
 
-    public Long getModifiedBy() {
+    public UUID getModifiedBy() {
         return modifiedBy;
     }
 
-    public void setModifiedBy(Long modifiedBy) {
+    public void setModifiedBy(UUID modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
 
@@ -156,13 +151,5 @@ public class Request {
 
     public void setModifiedDate(LocalDateTime modifiedDate) {
         this.modifiedDate = modifiedDate;
-    }
-
-    public List<RequestDetail> getRequestDetails() {
-        return requestDetails;
-    }
-
-    public void setRequestDetails(List<RequestDetail> requestDetails) {
-        this.requestDetails = requestDetails;
     }
 }
