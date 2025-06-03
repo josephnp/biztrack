@@ -1,17 +1,20 @@
-package com.biztrack.businessexpensetracker.dto.response;
+package com.biztrack.businessexpensetracker.dto.validation;
 
+import com.biztrack.businessexpensetracker.dto.rel.RelDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class ResReportDTO {
+public class ValReportDTO {
     private Long id;
-    private ResStatusDTO status;
+    private RelDTO request;
     private Double amount;
+    @JsonProperty("refund-amount")
     private Double refundAmount;
+    @JsonProperty("refund-receipt-url")
     private String refundReceiptURL;
     @JsonProperty("report-detail")
-    private List<ResReportDetailDTO> reportDetails;
+    private List<ValReportDetailDTO> reportDetails;
 
     public Long getId() {
         return id;
@@ -21,12 +24,12 @@ public class ResReportDTO {
         this.id = id;
     }
 
-    public ResStatusDTO getStatus() {
-        return status;
+    public RelDTO getRequest() {
+        return request;
     }
 
-    public void setStatus(ResStatusDTO status) {
-        this.status = status;
+    public void setRequest(RelDTO request) {
+        this.request = request;
     }
 
     public Double getAmount() {
@@ -53,13 +56,11 @@ public class ResReportDTO {
         this.refundReceiptURL = refundReceiptURL;
     }
 
-    public List<ResReportDetailDTO> getReportDetails() {
+    public List<ValReportDetailDTO> getReportDetails() {
         return reportDetails;
     }
 
-    public void setReportDetails(List<ResReportDetailDTO> reportDetails) {
+    public void setReportDetails(List<ValReportDetailDTO> reportDetails) {
         this.reportDetails = reportDetails;
     }
-
-
 }

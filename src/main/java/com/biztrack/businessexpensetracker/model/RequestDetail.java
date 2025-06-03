@@ -6,23 +6,20 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-/*
-    1. Pending Manager
-    2. Cancel
-    3. Pending Finance
-    4. Reject
-    5. Approve
- */
 @Entity
-@Table(name = "MstStatus")
-public class Status {
+@Table(name = "RequestDetail")
+public class RequestDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "Name", nullable = false)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "RequestID", foreignKey = @ForeignKey(name = "fk-request-detail"))
+    private Request request;
+
+    @Column(name = "Amount")
+    private Double amount;
 
     @Column(name = "Description")
     private String description;
@@ -49,12 +46,20 @@ public class Status {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Request getRequest() {
+        return request;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRequest(Request request) {
+        this.request = request;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
     public String getDescription() {

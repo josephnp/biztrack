@@ -7,7 +7,7 @@ public class ValDepartmentDTO {
     @NotEmpty(message = "Name can't be empty")
     private String name;
 
-    @NotEmpty(message = "Name can't be empty")
+    @NotEmpty(message = "Description can't be empty")
     private String description;
 
     public String getName() {
