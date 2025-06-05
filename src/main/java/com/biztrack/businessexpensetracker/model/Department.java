@@ -35,6 +35,13 @@ public class Department {
 //    @Column(name = "ModifiedDate", insertable = false)
 //    private LocalDateTime modifiedDate;
 
+
+    public Department(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
     public Long getId() {
         return id;
     }

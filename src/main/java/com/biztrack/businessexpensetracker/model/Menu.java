@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "Menu")
-public class Menu{
+public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -16,6 +16,9 @@ public class Menu{
 
     @Column(name = "Name")
     private String name;
+
+    @Column(name = "Description")
+    private String description;
 
     @Column(name = "CreatedBy", nullable = false, updatable = false)
     private UUID createdBy;
@@ -30,51 +33,59 @@ public class Menu{
     @Column(name = "ModifiedDate", insertable = false)
     private LocalDateTime modifiedDate;
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
 
-    public void setId(Long id){
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
-    public UUID getCreatedBy(){
+    public UUID getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(UUID createdBy){
+    public void setCreatedBy(UUID createdBy) {
         this.createdBy = createdBy;
     }
 
-    public LocalDateTime getCreatedDate(){
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate){
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public UUID getModifiedBy(){
+    public UUID getModifiedBy() {
         return modifiedBy;
     }
 
-    public void setModifiedBy(UUID modifiedBy){
+    public void setModifiedBy(UUID modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
 
-    public LocalDateTime getModifiedDate(){
+    public LocalDateTime getModifiedDate() {
         return modifiedDate;
     }
 
-    public void setModifiedDate(LocalDateTime modifiedDate){
+    public void setModifiedDate(LocalDateTime modifiedDate) {
         this.modifiedDate = modifiedDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

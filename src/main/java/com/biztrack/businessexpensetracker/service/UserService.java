@@ -24,12 +24,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
 public class UserService implements IService<User> {
     @Autowired
     private UserRepo userRepo;
@@ -45,17 +47,17 @@ public class UserService implements IService<User> {
 
     @Autowired
     private TransformPagination tp;
-    
+
     @Override
     public ResponseEntity<Object> save(User user, HttpServletRequest request) {
-        try{
-            if(user == null){
-                return new ResponseHandler().handleResponse("Object Null !!", HttpStatus.BAD_REQUEST,null,"AUT04FV001",request);
+        try {
+            if (user == null) {
+                return new ResponseHandler().handleResponse("Object Null !!", HttpStatus.BAD_REQUEST, null, "AUT04FV001", request);
             }
-            user.setPassword(BcryptImpl.hash(user.getUsername()+user.getPassword()));
+            user.setPassword(BcryptImpl.hash(user.getUsername() + user.getPassword()));
             userRepo.save(user);
-        }catch (Exception e){
-            return GlobalResponse.dataGagalDisimpan("AUT04FE001",request);
+        } catch (Exception e) {
+            return GlobalResponse.dataGagalDisimpan("AUT04FE001", request);
         }
         return GlobalResponse.dataBerhasilDisimpan(request);
     }
@@ -72,16 +74,16 @@ public class UserService implements IService<User> {
 
 
     public ResponseEntity<Object> update(UUID id, User user, HttpServletRequest request) {
-        try{
-            if(id == null){
-                return GlobalResponse.objectIsNull("AUT04FV011",request);
+        try {
+            if (id == null) {
+                return GlobalResponse.objectIsNull("AUT04FV011", request);
             }
-            if(user == null){
-                return GlobalResponse.objectIsNull("AUT04FV012",request);
+            if (user == null) {
+                return GlobalResponse.objectIsNull("AUT04FV012", request);
             }
             Optional<User> opUser = userRepo.findById(id);
-            if(!opUser.isPresent()){
-                return GlobalResponse.dataTidakDitemukan("AUT04FV013",request);
+            if (!opUser.isPresent()) {
+                return GlobalResponse.dataTidakDitemukan("AUT04FV013", request);
             }
 
             Long roleId = user.getRole().getId();
@@ -107,8 +109,8 @@ public class UserService implements IService<User> {
             userDB.setPassword(BcryptImpl.hash(user.getPassword()));
 
             userRepo.save(userDB);
-        }catch (Exception e){
-            return GlobalResponse.dataGagalDiubah("AUT04FE011",request);
+        } catch (Exception e) {
+            return GlobalResponse.dataGagalDiubah("AUT04FE011", request);
         }
         return GlobalResponse.dataBerhasilDiubah(request);
     }

@@ -16,15 +16,6 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
-
-    public Set<Menu> getMenus() {
-        return menus;
-    }
-
-    public void setMenus(Set<Menu> menus) {
-        this.menus = menus;
-    }
-
     @ManyToMany
     @JoinTable(
             name = "RoleMenu", // nama tabel join
@@ -32,12 +23,20 @@ public class Role {
             inverseJoinColumns = @JoinColumn(name = "MenuID")  // FK ke Menu
     )
     private Set<Menu> menus = new HashSet<>();
-
     @Column(name = "Name", nullable = false)
     private String name;
-
     @Column(name = "Description")
     private String description;
+
+    public Role(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
+    public Set<Menu> getMenus() {
+        return menus;
+    }
 
 //    @Column(name = "CreatedBy", nullable = false, updatable = false)
 //    private UUID createdBy;
@@ -52,6 +51,10 @@ public class Role {
 //    @UpdateTimestamp
 //    @Column(name = "ModifiedDate", insertable = false)
 //    private LocalDateTime modifiedDate;
+
+    public void setMenus(Set<Menu> menus) {
+        this.menus = menus;
+    }
 
     public Long getId() {
         return id;
@@ -76,7 +79,6 @@ public class Role {
     public void setDescription(String description) {
         this.description = description;
     }
-
 //    public UUID getCreatedBy() {
 //        return createdBy;
 //    }
