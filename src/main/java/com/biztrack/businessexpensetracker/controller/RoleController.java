@@ -49,18 +49,18 @@ public class RoleController {
         return roleService.findAll(pageable,request);
     }
 
-    @GetMapping("/{roleId}/menus")
-    public ResponseEntity<Object> getMenusByRoleId( @PathVariable Long roleId,
-                                                    Pageable pageable,
-                                                    HttpServletRequest request){
-        return roleService.getMenusByRoleId(roleId, pageable, request);
-    }
-
-    @PostMapping("/assign-menus")
-    public ResponseEntity<Object> assignMenusToRole(
-            @RequestBody AssignMenuToRoleDTO assignMenuToRoleDTO,
-            HttpServletRequest request
-    ) {
-        return roleService.assignMenusToRole(assignMenuToRoleDTO, request);
-    }
+//    @GetMapping("/{roleId}/menus")
+//    public ResponseEntity<Object> getMenusByRoleId( @PathVariable Long roleId,
+//                                                    Pageable pageable,
+//                                                    HttpServletRequest request){
+//        return roleService.getMenusByRoleId(roleId, pageable, request);
+//    }
+//
+//    @PostMapping("/assign-menus")
+//    public ResponseEntity<Object> assignMenusToRole(
+//            @RequestBody AssignMenuToRoleDTO assignMenuToRoleDTO,
+//            HttpServletRequest request
+//    ) {
+//        return roleService.assignMenusToRole(assignMenuToRoleDTO, request);
+//    }
 }
