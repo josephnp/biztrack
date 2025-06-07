@@ -28,6 +28,10 @@ public class Role {
     @Column(name = "Description")
     private String description;
 
+    public Role() {
+
+    }
+
     public Role(Long id, String name, String description) {
         this.id = id;
         this.name = name;

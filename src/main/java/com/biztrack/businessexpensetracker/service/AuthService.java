@@ -80,6 +80,7 @@ public class AuthService implements UserDetailsService {
                 return new ResponseHandler().handleResponse("Username atau Password Salah !!", HttpStatus.BAD_REQUEST, null, "AUT012", request);
             }
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return new ResponseHandler().handleResponse("Terjadi Kesalahan Pada Server", HttpStatus.INTERNAL_SERVER_ERROR, null,
                     "AUT013", request);
         }
@@ -99,7 +100,7 @@ public class AuthService implements UserDetailsService {
         }
 
         m.put("token", token);
-
+        System.out.println(bcrypt.hash("P@sword1!" + "admin@example.com"));
         return new ResponseHandler().handleResponse("Login Berhasil !!", HttpStatus.OK, m, null, request);
     }
 

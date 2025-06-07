@@ -3,4 +3,4 @@ INSERT INTO [projectz].[Departments](Description, Name) VALUES ('IT', 'IT'), ('F
 INSERT INTO [projectz].[Roles](Description, Name) VALUES ('Staff', 'Staff'), ('Admin', 'Admin'), ('Finance', 'Finance'), ('Manager', 'Manager')
 
 INSERT INTO [projectz].[Users] (ID, isActive, DepartmentID, RoleID, EmployeeNumber, Email, FullName, Password)
-VALUES ('a1b2c3d4-e5f6-7890-1234-567890abcdef', 1, 1, 2, 'EMP0001', 'admin@example.com', 'Admin User', 'P@sword1!');
+VALUES ('a1b2c3d4-e5f6-7890-1234-567890abcdef', 1, 1, 2, 'EMP0001', 'admin@example.com', 'Admin User', '$2a$12$SB5VfagJxtdDvc4Ox8WeseM3/WDt9RtfiyU8iHVeBxE7tWZAcae/2');
