@@ -6,9 +6,9 @@ import com.biztrack.businessexpensetracker.dto.response.ResRoleDTO;
 import com.biztrack.businessexpensetracker.dto.request.AssignMenuToRoleDTO;
 import com.biztrack.businessexpensetracker.dto.validation.ValRoleDTO;
 import com.biztrack.businessexpensetracker.handler.ResponseHandler;
-import com.biztrack.businessexpensetracker.model.Menu;
+//import com.biztrack.businessexpensetracker.model.Menu;
 import com.biztrack.businessexpensetracker.model.Role;
-import com.biztrack.businessexpensetracker.repo.MenuRepo;
+//import com.biztrack.businessexpensetracker.repo.MenuRepo;
 import com.biztrack.businessexpensetracker.repo.RoleRepo;
 import com.biztrack.businessexpensetracker.utils.GlobalFunction;
 import com.biztrack.businessexpensetracker.utils.GlobalResponse;
@@ -210,10 +210,10 @@ public class RoleService implements IService<Role> {
         }.getType());
     }
 
-    private List<MenuDTO> mapToMenuDTO(List<Menu> menus) {
-        return menus.stream()
-                .map(menu -> modelMapper.map(menu, MenuDTO.class))
-                .collect(Collectors.toList());
-    }
+//    private List<MenuDTO> mapToMenuDTO(List<Menu> menus) {
+//        return menus.stream()
+//                .map(menu -> modelMapper.map(menu, MenuDTO.class))
+//                .collect(Collectors.toList());
+//    }
 
 }
