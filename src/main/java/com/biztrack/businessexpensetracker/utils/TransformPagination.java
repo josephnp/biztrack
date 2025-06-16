@@ -30,17 +30,17 @@ public class TransformPagination {
         sortByColumn = isSorted ? "id" : sortByColumn;
         sort = isSorted ? "asc" : sortArr[1];
 
-        Map<String,Object> m = new HashMap<String,Object>();
-        m.put("content",ls);
-        m.put("total-data",page.getTotalElements());
-        m.put("total-pages",page.getTotalPages());
-        m.put("current-page",page.getNumber());
-        m.put("size-per-page",page.getSize());
-        m.put("sort-by",sortByColumn);
-        m.put("sort",sort.trim().toLowerCase());
-        m.put("column-name",column);
-        m.put("value",value==null?"":value);
-        return m;
+        Map<String,Object> pageData = new HashMap<>();
+        pageData.put("content",ls);
+        pageData.put("total-data",page.getTotalElements());
+        pageData.put("total-pages",page.getTotalPages());
+        pageData.put("current-page",page.getNumber());
+        pageData.put("size-per-page",page.getSize());
+        pageData.put("sort-by",sortByColumn);
+        pageData.put("sort",sort.trim().toLowerCase());
+        pageData.put("column-name",column);
+        pageData.put("value",value==null?"":value);
+        return pageData;
     }
 
 }

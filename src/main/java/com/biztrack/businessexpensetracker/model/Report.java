@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -19,7 +20,7 @@ public class Report {
     @JoinColumn(
             name = "RequestID",
             nullable = false,
-            foreignKey = @ForeignKey(name = "FK_Report_Requests")
+            foreignKey = @ForeignKey(name = "FK_Report_Request")
     )
     private Request request;
 
@@ -52,6 +53,9 @@ public class Report {
     @UpdateTimestamp
     @Column(name = "ModifiedDate", insertable = false)
     private LocalDateTime modifiedDate;
+
+    @OneToMany(mappedBy = "report")
+    private List<ReportDetail> reportDetails;
 
     public Long getId() {
         return id;
@@ -139,5 +143,13 @@ public class Report {
 
     public void setModifiedDate(LocalDateTime modifiedDate) {
         this.modifiedDate = modifiedDate;
+    }
+
+    public List<ReportDetail> getReportDetails(){
+        return reportDetails;
+    }
+
+    public void setReportDetails(List<ReportDetail> reportDetails){
+        this.reportDetails = reportDetails;
     }
 }

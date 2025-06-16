@@ -16,6 +16,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
+
     @ManyToMany
     @JoinTable(
             name = "RoleMenu", // nama tabel join
@@ -23,14 +24,12 @@ public class Role {
             inverseJoinColumns = @JoinColumn(name = "MenuID")  // FK ke Menu
     )
     private Set<Menu> menus = new HashSet<>();
+
     @Column(name = "Name", nullable = false)
     private String name;
+
     @Column(name = "Description")
     private String description;
-
-    public Role() {
-
-    }
 
     public Role(Long id, String name, String description) {
         this.id = id;
@@ -42,19 +41,19 @@ public class Role {
         return menus;
     }
 
-//    @Column(name = "CreatedBy", nullable = false, updatable = false)
-//    private UUID createdBy;
-//
-//    @CreationTimestamp
-//    @Column(name = "CreatedDate", nullable = false, updatable = false)
-//    private LocalDateTime createdDate;
-//
-//    @Column(name = "ModifiedBy", insertable = false)
-//    private UUID modifiedBy;
-//
-//    @UpdateTimestamp
-//    @Column(name = "ModifiedDate", insertable = false)
-//    private LocalDateTime modifiedDate;
+    @Column(name = "CreatedBy", nullable = false, updatable = false)
+    private UUID createdBy;
+
+    @CreationTimestamp
+    @Column(name = "CreatedDate", nullable = false, updatable = false)
+    private LocalDateTime createdDate;
+
+    @Column(name = "ModifiedBy", insertable = false)
+    private UUID modifiedBy;
+
+    @UpdateTimestamp
+    @Column(name = "ModifiedDate", insertable = false)
+    private LocalDateTime modifiedDate;
 
     public void setMenus(Set<Menu> menus) {
         this.menus = menus;
@@ -83,35 +82,36 @@ public class Role {
     public void setDescription(String description) {
         this.description = description;
     }
-//    public UUID getCreatedBy() {
-//        return createdBy;
-//    }
-//
-//    public void setCreatedBy(UUID createdBy) {
-//        this.createdBy = createdBy;
-//    }
-//
-//    public LocalDateTime getCreatedDate() {
-//        return createdDate;
-//    }
-//
-//    public void setCreatedDate(LocalDateTime createdDate) {
-//        this.createdDate = createdDate;
-//    }
-//
-//    public UUID getModifiedBy() {
-//        return modifiedBy;
-//    }
-//
-//    public void setModifiedBy(UUID modifiedBy) {
-//        this.modifiedBy = modifiedBy;
-//    }
-//
-//    public LocalDateTime getModifiedDate() {
-//        return modifiedDate;
-//    }
-//
-//    public void setModifiedDate(LocalDateTime modifiedDate) {
-//        this.modifiedDate = modifiedDate;
-//    }
+
+    public UUID getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public UUID getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(UUID modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public LocalDateTime getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(LocalDateTime modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
 }

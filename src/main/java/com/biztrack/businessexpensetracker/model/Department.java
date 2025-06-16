@@ -21,31 +21,25 @@ public class Department {
     @Column(name = "Description")
     private String description;
 
-//    @Column(name = "CreatedBy", nullable = false, updatable = false)
-//    private UUID createdBy;
-//
-//    @CreationTimestamp
-//    @Column(name = "CreatedDate", nullable = false, updatable = false)
-//    private LocalDateTime createdDate;
-//
-//    @Column(name = "ModifiedBy", insertable = false)
-//    private UUID modifiedBy;
-//
-//    @UpdateTimestamp
-//    @Column(name = "ModifiedDate", insertable = false)
-//    private LocalDateTime modifiedDate;
+    @Column(name = "CreatedBy", nullable = false, updatable = false)
+    private UUID createdBy;
 
-    public Department() {
+    @CreationTimestamp
+    @Column(name = "CreatedDate", nullable = false, updatable = false)
+    private LocalDateTime createdDate;
 
-    }
+    @Column(name = "ModifiedBy", insertable = false)
+    private UUID modifiedBy;
 
+    @UpdateTimestamp
+    @Column(name = "ModifiedDate", insertable = false)
+    private LocalDateTime modifiedDate;
 
     public Department(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
-
 
     public Long getId() {
         return id;
@@ -71,35 +65,35 @@ public class Department {
         this.description = description;
     }
 
-//    public UUID getCreatedBy() {
-//        return createdBy;
-//    }
-//
-//    public void setCreatedBy(UUID createdBy) {
-//        this.createdBy = createdBy;
-//    }
-//
-//    public LocalDateTime getCreatedDate() {
-//        return createdDate;
-//    }
-//
-//    public void setCreatedDate(LocalDateTime createdDate) {
-//        this.createdDate = createdDate;
-//    }
-//
-//    public UUID getModifiedBy() {
-//        return modifiedBy;
-//    }
-//
-//    public void setModifiedBy(UUID modifiedBy) {
-//        this.modifiedBy = modifiedBy;
-//    }
-//
-//    public LocalDateTime getModifiedDate() {
-//        return modifiedDate;
-//    }
-//
-//    public void setModifiedDate(LocalDateTime modifiedDate) {
-//        this.modifiedDate = modifiedDate;
-//    }
+    public UUID getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public UUID getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(UUID modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public LocalDateTime getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(LocalDateTime modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
 }

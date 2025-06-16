@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -25,7 +26,6 @@ public class Request {
 
     @Column(name = "Purpose", length = 100, nullable = false)
     private String purpose;
-
 
     @Column(name = "Amount")
     private Double amount;
@@ -56,6 +56,9 @@ public class Request {
     @UpdateTimestamp
     @Column(name = "ModifiedDate", insertable = false)
     private LocalDateTime modifiedDate;
+
+    @OneToMany(mappedBy = "request")
+    private List<RequestDetail> requestDetails;
 
     public Long getId() {
         return id;
@@ -151,5 +154,13 @@ public class Request {
 
     public void setModifiedDate(LocalDateTime modifiedDate) {
         this.modifiedDate = modifiedDate;
+    }
+
+    public List<RequestDetail> getRequestDetails(){
+        return requestDetails;
+    }
+
+    public void setRequestDetails(List<RequestDetail> requestDetails){
+        this.requestDetails = requestDetails;
     }
 }
