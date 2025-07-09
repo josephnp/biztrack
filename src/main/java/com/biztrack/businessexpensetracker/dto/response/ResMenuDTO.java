@@ -1,6 +1,6 @@
-package com.biztrack.businessexpensetracker.dto;
+package com.biztrack.businessexpensetracker.dto.response;
 
-public class MenuDTO {
+public class ResMenuDTO {
     private Long id;
     private String name;
     private String description;
