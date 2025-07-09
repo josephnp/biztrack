@@ -27,6 +27,11 @@ public class TransformPagination {
         Iterator<Sort.Order> orderIterator = page.getSort().stream().iterator();
         Sort.Order s = orderIterator.hasNext() ? orderIterator.next() : null;
         sortByColumn = s == null ? "id" : s.getProperty();
+        int lengthSortBy = sortByColumn.split("\\.").length;
+        if (lengthSortBy > 1){
+            sortByColumn = sortByColumn.split("\\.")[lengthSortBy - 1];
+        }
+        sortByColumn = GlobalFunction.camelToKebabCase(sortByColumn);
         sort = s == null ? "ASC" : s.getDirection().name();
 
         Map<String,Object> pageData = new HashMap<>();

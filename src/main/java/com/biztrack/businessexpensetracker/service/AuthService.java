@@ -1,6 +1,9 @@
 package com.biztrack.businessexpensetracker.service;
 
 import com.biztrack.businessexpensetracker.config.JwtConfig;
+import com.biztrack.businessexpensetracker.dto.response.ResDepartmentDTO;
+import com.biztrack.businessexpensetracker.dto.response.ResMenuDTO;
+import com.biztrack.businessexpensetracker.dto.response.ResRoleDTO;
 import com.biztrack.businessexpensetracker.dto.validation.LoginDTO;
 import com.biztrack.businessexpensetracker.handler.ResponseHandler;
 import com.biztrack.businessexpensetracker.model.User;
@@ -9,7 +12,9 @@ import com.biztrack.businessexpensetracker.security.BcryptCustom;
 import com.biztrack.businessexpensetracker.security.Crypto;
 import com.biztrack.businessexpensetracker.security.JwtUtility;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +25,13 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class
-AuthService
-implements UserDetailsService
- {
+@Transactional
+public class AuthService implements UserDetailsService {
 
     @Autowired
     private UserRepo userRepo;
@@ -48,7 +52,7 @@ implements UserDetailsService
         User userNext;
         try {
             String userEmail = user.getEmail();
-            Optional<User> opUser = userRepo.findByEmail(userEmail);
+            Optional<User> opUser = userRepo.findByEmailContainsIgnoreCase(userEmail);
 
             if (!opUser.isPresent()) {
                 return new ResponseHandler().handleResponse("User Tidak Ditemukan", HttpStatus.BAD_REQUEST, null, "AUT011", request);
@@ -77,6 +81,7 @@ implements UserDetailsService
             token = Crypto.performEncrypt(token);
         }
 
+        data.put("menu", modelMapper.map(userNext.getRole().getListMenu(), new TypeToken<List<ResMenuDTO>>(){}.getType()));
         data.put("token", token);
         return new ResponseHandler().handleResponse("Login Berhasil !!", HttpStatus.OK, data, null, request);
     }
@@ -86,9 +91,9 @@ implements UserDetailsService
         return modelMapper.map(loginDTO, User.class);
     }
 
-@Override
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> opUser = userRepo.findByEmail(username);
+        Optional<User> opUser = userRepo.findByEmailContainsIgnoreCase(username);
         if (!opUser.isPresent()) {
             throw new UsernameNotFoundException("Username atau Password Salah !!!");
         }

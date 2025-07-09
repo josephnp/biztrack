@@ -1,11 +1,8 @@
 package com.biztrack.businessexpensetracker.controller;
 
 import com.biztrack.businessexpensetracker.config.OtherConfig;
-import com.biztrack.businessexpensetracker.dto.request.AssignMenuToRoleDTO;
-import com.biztrack.businessexpensetracker.dto.validation.ValRoleDTO;
-import com.biztrack.businessexpensetracker.dto.validation.ValStatusDTO;
-import com.biztrack.businessexpensetracker.service.RoleService;
-import com.biztrack.businessexpensetracker.service.StatusService;
+import com.biztrack.businessexpensetracker.dto.validation.ValMenuDTO;
+import com.biztrack.businessexpensetracker.service.MenuService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,40 +14,40 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/role")
-public class RoleController {
+@RequestMapping("/menu")
+public class MenuController {
     @Autowired
-    private RoleService roleService;
+    private MenuService menuService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('Role')")
-    public ResponseEntity<Object> save(@Valid @RequestBody ValRoleDTO valRoleDTO,
+    @PreAuthorize("hasAuthority('Menu')")
+    public ResponseEntity<Object> save(@Valid @RequestBody ValMenuDTO valMenuDTO,
                                        HttpServletRequest request){
-        return roleService.save(roleService.mapToRole(valRoleDTO),request);
+        return menuService.save(menuService.mapToMenu(valMenuDTO),request);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('Role')")
-    public ResponseEntity<Object> update(@PathVariable Long id, @Valid @RequestBody ValRoleDTO valRoleDTO,
+    @PreAuthorize("hasAuthority('Menu')")
+    public ResponseEntity<Object> update(@PathVariable Long id, @Valid @RequestBody ValMenuDTO valMenuDTO,
                                          HttpServletRequest request){
-        return roleService.update(id,roleService.mapToRole(valRoleDTO),request);
+        return menuService.update(id,menuService.mapToMenu(valMenuDTO),request);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('Role')")
+    @PreAuthorize("hasAuthority('Menu')")
     public ResponseEntity<Object> delete(@PathVariable Long id, HttpServletRequest request){
-        return roleService.delete(id,request);
+        return menuService.delete(id,request);
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('Role')")
+    @PreAuthorize("hasAuthority('Menu')")
     public ResponseEntity<Object> findAll(HttpServletRequest request){
         Pageable pageable = PageRequest.of(0, OtherConfig.getDefaultPaginationSize(), Sort.by("id"));
-        return roleService.findAll(pageable,request);
+        return menuService.findAll(pageable,request);
     }
 
     @GetMapping("/{sort}/{sort-by}/{page}")
-    @PreAuthorize("hasAuthority('Role')")
+    @PreAuthorize("hasAuthority('Menu')")
     public ResponseEntity<Object> findByParam(
             @PathVariable String sort,
             @PathVariable(value = "sort-by") String sortBy,
@@ -65,14 +62,14 @@ public class RoleController {
         } else {
             pageable = PageRequest.of(page, size, Sort.by(sortBy));
         }
-        return roleService.findByParam(pageable,column,value,request);
+        return menuService.findByParam(pageable,column,value,request);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('Role')")
+    @PreAuthorize("hasAuthority('Menu')")
     public ResponseEntity<Object> findById(
             @PathVariable Long id,
             HttpServletRequest request){
-        return roleService.findById(id,request);
+        return menuService.findById(id,request);
     }
 }
