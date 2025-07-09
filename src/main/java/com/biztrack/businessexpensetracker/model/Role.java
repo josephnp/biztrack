@@ -5,8 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "MstRole")
@@ -26,13 +25,12 @@ public class Role {
     @Column(name = "ID")
     private Long id;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "RoleMenu", // nama tabel join
-//            joinColumns = @JoinColumn(name = "RoleID"),  // FK ke Role
-//            inverseJoinColumns = @JoinColumn(name = "MenuID")  // FK ke Menu
-//    )
-//    private Set<Menu> menus = new HashSet<>();
+    @ManyToMany
+    @JoinTable(name = "MapRoleMenu", uniqueConstraints =@UniqueConstraint(name = "unq-role-to-menu",columnNames = {"IDRole","IDMenu"}),
+            joinColumns = @JoinColumn(name = "IDRole",foreignKey = @ForeignKey(name = "fk-to-role")),
+            inverseJoinColumns = @JoinColumn(name = "IDMenu",foreignKey = @ForeignKey(name = "fk-to-menu"))
+    )
+    private List<Menu> listMenu;
 
     @Column(name = "Name", nullable = false)
     private String name;
@@ -62,9 +60,13 @@ public class Role {
         this.id = id;
     }
 
-//    public Set<Menu> getMenus() {
-//        return menus;
-//    }
+    public List<Menu> getListMenu() {
+        return listMenu;
+    }
+
+    public void setListMenu(List<Menu> listMenu) {
+        this.listMenu = listMenu;
+    }
 
     public String getName() {
         return name;

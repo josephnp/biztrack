@@ -14,6 +14,7 @@ import java.util.List;
 public class ValRequestDTO {
     private Long id;
     private String purpose;
+    private String description;
     private Double amount;
     @JsonProperty("request-detail")
     private List<ValRequestDetailDTO> requestDetails;
@@ -32,6 +33,14 @@ public class ValRequestDTO {
 
     public void setPurpose(String purpose) {
         this.purpose = purpose;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Double getAmount() {

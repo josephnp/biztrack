@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
+
 public class ValUserDTO {
 
     @NotBlank(message = "Name can't be blank")
@@ -29,7 +30,6 @@ public class ValUserDTO {
 
     @NotNull(message = "Relasi Tidak Boleh Kosong")
     private RelDTO role;
-
 
     public String getFullName() {
         return fullName;

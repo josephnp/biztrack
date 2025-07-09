@@ -1,8 +1,6 @@
 package com.biztrack.businessexpensetracker.service;
 
 import com.biztrack.businessexpensetracker.core.IService;
-import com.biztrack.businessexpensetracker.dto.MenuDTO;
-import com.biztrack.businessexpensetracker.dto.request.AssignMenuToRoleDTO;
 import com.biztrack.businessexpensetracker.dto.response.ResRoleDTO;
 import com.biztrack.businessexpensetracker.dto.validation.ValRoleDTO;
 import com.biztrack.businessexpensetracker.model.Role;
@@ -15,9 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,8 +48,8 @@ public class RoleService implements IService<Role> {
                 return GlobalResponse.objectIsNull("BIZ01FV001", request);
             }
 
-            Optional<Role> opRole = roleRepo.findByName(role.getName());
-            if (opRole.isPresent()) {
+            List<Role> roleList = roleRepo.findByNameContainsIgnoreCase(role.getName());
+            if (!roleList.isEmpty()) {
                 return GlobalResponse.dataExists("BIZ01FV002", request);
             }
 
@@ -84,6 +80,7 @@ public class RoleService implements IService<Role> {
             Role roleDB = opRole.get();
             roleDB.setName(role.getName());
             roleDB.setDescription(role.getDescription());
+            roleDB.setListMenu(role.getListMenu());
             roleDB.setModifiedBy(Long.parseLong(tokenData.get("id").toString()));
         } catch (Exception e) {
             return GlobalResponse.somethingWrong("BIZ01FE011", request);
@@ -129,68 +126,59 @@ public class RoleService implements IService<Role> {
         return GlobalResponse.foundData(data, request);
     }
 
-//    public ResponseEntity<Object> getMenusByRoleId(Long roleId, Pageable pageable, HttpServletRequest request){
-//        Page<Menu> page = null;
-//        List<Menu> list = null;
-//        List<MenuDTO> listDTO = null;
-//        Map<String, Object> data = null;
-//
-//        try{
-//            if (roleId == null) {
-//                return GlobalResponse.objectIsNull("ROL04FV021", request);
-//            }
-//            Optional<Role> opRole = roleRepo.findById(roleId);
-//            if (opRole.isEmpty()) {
-//                return GlobalResponse.dataTidakDitemukan("ROL04FV031", request);
-//            }
-//
-//            list = new ArrayList<>(opRole.get().getMenus());
-//
-//
-//            int total = list.size();
-//            int start = (int) pageable.getOffset();
-//            int end = Math.min(start + pageable.getPageSize(), total);
-//
-//            if (start > end || start >= total) {
-//                return GlobalResponse.dataTidakDitemukan("RMN04FV041", request);
-//            }
-//
-//            List<Menu> pagedList = list.subList(start, end);
-//            listDTO = mapToMenuDTO(pagedList);
-//
-//            page = new PageImpl<>(pagedList, pageable, total);
-//            data = tp.transformPagination(listDTO, page, "id", "");
-//        } catch (Exception e) {
-//            return GlobalResponse.terjadiKesalahan("RMN04FE041", request);
-//        }
-//        return GlobalResponse.dataDitemukan(data, request);
-//    }
-//
-//    @Transactional
-//    public ResponseEntity<Object> assignMenusToRole(AssignMenuToRoleDTO assignMenuToRoleDTO, HttpServletRequest request) {
-//        try {
-//            Optional<Role> opRole = roleRepo.findById(assignMenuToRoleDTO.getRoleId());
-//            if (opRole.isEmpty()) {
-//                return GlobalResponse.dataTidakDitemukan("ROL04FV031", request);
-//            }
-//
-//            List<Menu> menus = menuRepo.findAllById(assignMenuToRoleDTO.getMenuId());
-//
-//            if (menus.isEmpty()) {
-//                return GlobalResponse.dataTidakDitemukan("RMN04FV051", request);
-//            }
-//
-//            Role role = opRole.get();
-//            // Replace seluruh menu yang dimiliki role dengan menu baru dari request
-//            role.setMenus(new HashSet<>(menus));
-//
-//            roleRepo.save(role);  // Simpan perubahan relasi
-//
-//            return GlobalResponse.dataBerhasilDiubah(request);
-//        } catch (Exception e) {
-//            return GlobalResponse.terjadiKesalahan("RMN04FE051", request);
-//        }
-//    }
+    // 041 - 050
+    @Override
+    public ResponseEntity<Object> findByParam(Pageable pageable, String columnName, String value, HttpServletRequest request) {
+        Page<Role> page;
+        List<ResRoleDTO> listDTO;
+        Map<String, Object> data;
+        try {
+            if (!isValidSort(pageable.getSort().stream().toList().getFirst().getProperty())){
+                return GlobalResponse.dataNotFound("BIZ01FV041", request);
+            }
+            page = switch (columnName) {
+                case "name" -> roleRepo.findByNameContainsIgnoreCase(value, pageable);
+                case "description" -> roleRepo.findByDescriptionContainsIgnoreCase(value, pageable);
+                case "menu" -> roleRepo.findByListMenu_NameContainsIgnoreCase(value, pageable);
+                default -> roleRepo.findAll(pageable);
+            };
+            if (page.isEmpty()) {
+                return GlobalResponse.dataNotFound("BIZ01FV042", request);
+            }
+            listDTO = mapToDTO(page.getContent());
+            data = tp.transformPagination(listDTO, page, columnName, value);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ01FE041", request);
+        }
+        return GlobalResponse.foundData(data, request);
+    }
+
+    // 051 - 060
+    @Override
+    public ResponseEntity<Object> findById(Long id, HttpServletRequest request) {
+        ResRoleDTO response;
+        try {
+            if (id == null) {
+                return GlobalResponse.objectIsNull("BIZ02FV051", request);
+            }
+            Optional<Role> opRole = roleRepo.findById(id);
+            if (!opRole.isPresent()) {
+                return GlobalResponse.dataNotFound("BIZ02FV052", request);
+            }
+            Role roleDB = opRole.get();
+            response = mapToDTO(roleDB);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ02FE051", request);
+        }
+        return GlobalResponse.foundData(response, request);
+    }
+
+    public Boolean isValidSort(String sort){
+        return switch (sort) {
+            case "id", "name", "description" -> true;
+            default -> false;
+        };
+    }
 
     public Role mapToRole(ValRoleDTO valRoleDTO) {
         return modelMapper.map(valRoleDTO, Role.class);
@@ -201,10 +189,7 @@ public class RoleService implements IService<Role> {
         }.getType());
     }
 
-//    private List<MenuDTO> mapToMenuDTO(List<Menu> menus) {
-//        return menus.stream()
-//                .map(menu -> modelMapper.map(menu, MenuDTO.class))
-//                .collect(Collectors.toList());
-//    }
-
+    public ResRoleDTO mapToDTO(Role role) {
+        return modelMapper.map(role, ResRoleDTO.class);
+    }
 }

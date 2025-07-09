@@ -49,8 +49,8 @@ public class DepartmentService implements IService<Department> {
                 return GlobalResponse.objectIsNull("BIZ02FV001", request);
             }
 
-            Optional<Department> opDepartment = departmentRepo.findByName(department.getName());
-            if (opDepartment.isPresent()) {
+            List<Department> departmentList = departmentRepo.findByNameContainsIgnoreCase(department.getName());
+            if (!departmentList.isEmpty()) {
                 return GlobalResponse.dataExists("BIZ02FV002", request);
             }
             department.setCreatedBy(Long.parseLong(tokenData.get("id").toString()));
@@ -125,6 +125,59 @@ public class DepartmentService implements IService<Department> {
         return GlobalResponse.foundData(data, request);
     }
 
+    // 041 - 050
+    @Override
+    public ResponseEntity<Object> findByParam(Pageable pageable, String columnName, String value, HttpServletRequest request) {
+        Page<Department> page;
+        List<ResDepartmentDTO> listDTO;
+        Map<String, Object> data;
+        try {
+            if (!isValidSort(pageable.getSort().stream().toList().getFirst().getProperty())){
+                return GlobalResponse.dataNotFound("BIZ02FV041", request);
+            }
+            page = switch (columnName) {
+                case "name" -> departmentRepo.findByNameContainsIgnoreCase(value, pageable);
+                case "description" -> departmentRepo.findByDescriptionContainsIgnoreCase(value, pageable);
+                default -> departmentRepo.findAll(pageable);
+            };
+            if (page.isEmpty()) {
+                return GlobalResponse.dataNotFound("BIZ02FV042", request);
+            }
+            listDTO = mapToDTO(page.getContent());
+            data = tp.transformPagination(listDTO, page, columnName, value);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ02FE041", request);
+        }
+        return GlobalResponse.foundData(data, request);
+    }
+
+    // 051 - 060
+    @Override
+    public ResponseEntity<Object> findById(Long id, HttpServletRequest request) {
+        ResDepartmentDTO response;
+        try {
+            if (id == null) {
+                return GlobalResponse.objectIsNull("BIZ02FV051", request);
+            }
+            Optional<Department> opDepartment = departmentRepo.findById(id);
+            if (!opDepartment.isPresent()) {
+                return GlobalResponse.dataNotFound("BIZ02FV052", request);
+            }
+            Department departmentDB = opDepartment.get();
+            response = mapToDTO(departmentDB);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ02FE051", request);
+        }
+        return GlobalResponse.foundData(response, request);
+    }
+
+    public Boolean isValidSort(String sort){
+        return switch (sort) {
+            case "id", "name", "description" -> true;
+            default -> false;
+        };
+    }
+
     public Department mapToDepartment(ValDepartmentDTO valDepartmentDTO) {
         return modelMapper.map(valDepartmentDTO, Department.class);
     }
@@ -132,5 +185,9 @@ public class DepartmentService implements IService<Department> {
     public List<ResDepartmentDTO> mapToDTO(List<Department> listDepartment) {
         return modelMapper.map(listDepartment, new TypeToken<List<ResDepartmentDTO>>() {
         }.getType());
+    }
+
+    public ResDepartmentDTO mapToDTO(Department department) {
+        return modelMapper.map(department, ResDepartmentDTO.class);
     }
 }

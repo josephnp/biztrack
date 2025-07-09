@@ -1,17 +1,21 @@
 package com.biztrack.businessexpensetracker.repo;
 
 import com.biztrack.businessexpensetracker.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
 
-    Optional<User> findByEmail(String email);
-    Optional<User> findById(Long id);
+    Page<User> findByFullNameContainsIgnoreCase(String name, Pageable pageable);
+    Page<User> findByEmailContainsIgnoreCase(String email, Pageable pageable);
+    Page<User> findByEmployeeNumberContainsIgnoreCase(String employeeNumber, Pageable pageable);
 
+    Page<User> findByRole_NameContainsIgnoreCase(String role, Pageable pageable);
+
+    Optional<User> findByEmailContainsIgnoreCase(String employeeNumber);
 }

@@ -2,17 +2,12 @@ package com.biztrack.businessexpensetracker.service;
 
 import com.biztrack.businessexpensetracker.core.IExpenses;
 import com.biztrack.businessexpensetracker.core.IService;
-import com.biztrack.businessexpensetracker.dto.response.ResDepartmentDTO;
 import com.biztrack.businessexpensetracker.dto.response.ResRequestDTO;
-import com.biztrack.businessexpensetracker.dto.validation.ValDepartmentDTO;
 import com.biztrack.businessexpensetracker.dto.validation.ValRequestDTO;
 import com.biztrack.businessexpensetracker.model.*;
-import com.biztrack.businessexpensetracker.repo.DepartmentRepo;
 import com.biztrack.businessexpensetracker.repo.RequestDetailRepo;
 import com.biztrack.businessexpensetracker.repo.RequestRepo;
-import com.biztrack.businessexpensetracker.utils.GlobalFunction;
-import com.biztrack.businessexpensetracker.utils.GlobalResponse;
-import com.biztrack.businessexpensetracker.utils.TransformPagination;
+import com.biztrack.businessexpensetracker.utils.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -23,9 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Kode Platform / Aplikasi : BIZ
@@ -74,7 +67,6 @@ public class RequestService implements IService<Request>, IExpenses {
                 relRequest.setId(expensesRequest.getId());
                 requestDetail.setRequest(relRequest);
                 requestDetail.setCreatedBy(Long.parseLong(tokenData.get("id").toString()));
-
                 requestDetailRepo.save(requestDetail);
             }
 
@@ -115,6 +107,7 @@ public class RequestService implements IService<Request>, IExpenses {
 
             requestDB.setStatus(status);
             requestDB.setPurpose(expensesRequest.getPurpose());
+            requestDB.setDescription(expensesRequest.getDescription());
             requestDB.setAmount(expensesRequest.getAmount());
             requestDB.setModifiedBy(Long.parseLong(tokenData.get("id").toString()));
 
@@ -172,6 +165,54 @@ public class RequestService implements IService<Request>, IExpenses {
             return GlobalResponse.somethingWrong("BIZ05FE031", request);
         }
         return GlobalResponse.foundData(data, request);
+    }
+
+    // 041 - 050
+    @Override
+    public ResponseEntity<Object> findByParam(Pageable pageable, String columnName, String value, HttpServletRequest request) {
+        Page<Request> page;
+        List<ResRequestDTO> listDTO;
+        Map<String, Object> data;
+        try {
+            if (!isValidSort(pageable.getSort().stream().toList().getFirst().getProperty())){
+                return GlobalResponse.dataNotFound("BIZ05FV041", request);
+            }
+            page = switch (columnName) {
+                case "purpose" -> requestRepo.findByPurposeContainsIgnoreCase(value, pageable);
+                case "description" -> requestRepo.findByDescriptionContainsIgnoreCase(value, pageable);
+                case "full-name" -> requestRepo.findByUser_FullNameContainsIgnoreCase(value, pageable);
+                case "status" -> requestRepo.findByStatus_NameContainsIgnoreCase(value, pageable);
+                default -> requestRepo.findAll(pageable);
+            };
+            if (page.isEmpty()) {
+                return GlobalResponse.dataNotFound("BIZ05FV042", request);
+            }
+            listDTO = mapToDTO(page.getContent());
+            data = tp.transformPagination(listDTO, page, columnName, value);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ05FE041", request);
+        }
+        return GlobalResponse.foundData(data, request);
+    }
+
+    // 051 - 060
+    @Override
+    public ResponseEntity<Object> findById(Long id, HttpServletRequest request) {
+        ResRequestDTO response;
+        try {
+            if (id == null) {
+                return GlobalResponse.objectIsNull("BIZ05FV051", request);
+            }
+            Optional<Request> opRequest = requestRepo.findById(id);
+            if (!opRequest.isPresent()) {
+                return GlobalResponse.dataNotFound("BIZ05FV052", request);
+            }
+            Request requestDB = opRequest.get();
+            response = mapToDTO(requestDB);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ05FE051", request);
+        }
+        return GlobalResponse.foundData(response, request);
     }
 
     // 101 - 110
@@ -278,6 +319,13 @@ public class RequestService implements IService<Request>, IExpenses {
         return GlobalResponse.updatedSuccess(request);
     }
 
+    public Boolean isValidSort(String sort){
+        return switch (sort) {
+            case "id", "purpose", "description","user.fullName","status" -> true;
+            default -> false;
+        };
+    }
+
     public Request mapToRequest(ValRequestDTO valRequestDTO) {
         return modelMapper.map(valRequestDTO, Request.class);
     }
@@ -285,5 +333,9 @@ public class RequestService implements IService<Request>, IExpenses {
     public List<ResRequestDTO> mapToDTO(List<Request> listRequest) {
         return modelMapper.map(listRequest, new TypeToken<List<ResRequestDTO>>() {
         }.getType());
+    }
+
+    public ResRequestDTO mapToDTO(Request request) {
+        return modelMapper.map(request, ResRequestDTO.class);
     }
 }

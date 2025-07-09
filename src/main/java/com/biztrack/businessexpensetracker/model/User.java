@@ -116,10 +116,14 @@ public class User implements UserDetails {
     public void setPassword(String password) {
         this.password = password;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<Menu> allMenus = this.role.getListMenu();
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
+        for (Menu menu : allMenus) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(menu.getName()));
+        }
         return grantedAuthorities;
     }
 

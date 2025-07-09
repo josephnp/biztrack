@@ -165,6 +165,54 @@ public class ReportService implements IService<Report>, IExpenses {
         return GlobalResponse.foundData(data, request);
     }
 
+    // 041 - 050
+    @Override
+    public ResponseEntity<Object> findByParam(Pageable pageable, String columnName, String value, HttpServletRequest request) {
+        Page<Report> page;
+        List<ResReportDTO> listDTO;
+        Map<String, Object> data;
+        try {
+            if (!isValidSort(pageable.getSort().stream().toList().getFirst().getProperty())){
+                return GlobalResponse.dataNotFound("BIZ06FV041", request);
+            }
+            page = switch (columnName) {
+                case "purpose" -> reportRepo.findByRequest_PurposeContainsIgnoreCase(value, pageable);
+                case "description" -> reportRepo.findByRequest_DescriptionContainsIgnoreCase(value, pageable);
+                case "full-name" -> reportRepo.findByRequest_User_FullNameContainsIgnoreCase(value, pageable);
+                case "status" -> reportRepo.findByStatus_NameContainsIgnoreCase(value, pageable);
+                default -> reportRepo.findAll(pageable);
+            };
+            if (page.isEmpty()) {
+                return GlobalResponse.dataNotFound("BIZ06FV042", request);
+            }
+            listDTO = mapToDTO(page.getContent());
+            data = tp.transformPagination(listDTO, page, columnName, value);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ06FE041", request);
+        }
+        return GlobalResponse.foundData(data, request);
+    }
+
+    // 051 - 060
+    @Override
+    public ResponseEntity<Object> findById(Long id, HttpServletRequest request) {
+        ResReportDTO response;
+        try {
+            if (id == null) {
+                return GlobalResponse.objectIsNull("BIZ06FV051", request);
+            }
+            Optional<Report> opReport = reportRepo.findById(id);
+            if (!opReport.isPresent()) {
+                return GlobalResponse.dataNotFound("BIZ06FV052", request);
+            }
+            Report reportDB = opReport.get();
+            response = mapToDTO(reportDB);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ06FE051", request);
+        }
+        return GlobalResponse.foundData(response, request);
+    }
+
     // 101 - 110
     @Override
     public ResponseEntity<Object> cancel(Long id, HttpServletRequest request) {
@@ -244,12 +292,22 @@ public class ReportService implements IService<Report>, IExpenses {
         return GlobalResponse.savingSuccess(request);
     }
 
+    public Boolean isValidSort(String column){
+        return switch (column) {
+            case "id", "request.purpose", "request.description","request.user.fullName","status" -> true;
+            default -> false;
+        };
+    }
+
     public Report mapToReport(ValReportDTO valReportDTO) {
         return modelMapper.map(valReportDTO, Report.class);
     }
 
     public List<ResReportDTO> mapToDTO(List<Report> listReport) {
-        return modelMapper.map(listReport, new TypeToken<List<ResReportDTO>>() {
-        }.getType());
+        return modelMapper.map(listReport, new TypeToken<List<ResReportDTO>>() {}.getType());
+    }
+
+    public ResReportDTO mapToDTO(Report report) {
+        return modelMapper.map(report, ResReportDTO.class);
     }
 }

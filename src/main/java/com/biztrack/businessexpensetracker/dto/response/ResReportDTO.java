@@ -8,6 +8,7 @@ public class ResReportDTO {
     private Long id;
     private ResStatusDTO status;
     private Double amount;
+    private String comment;
     private Double refundAmount;
     private String refundReceiptURL;
     @JsonProperty("report-detail")
@@ -35,6 +36,14 @@ public class ResReportDTO {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public Double getRefundAmount() {

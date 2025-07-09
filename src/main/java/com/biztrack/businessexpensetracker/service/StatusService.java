@@ -50,8 +50,8 @@ public class StatusService implements IService<Status> {
                 return GlobalResponse.objectIsNull("BIZ04FV001", request);
             }
 
-            Optional<Status> opStatus = statusRepo.findByName(status.getName());
-            if (opStatus.isPresent()) {
+            List<Status> opStatus = statusRepo.findByNameContainsIgnoreCase(status.getName());
+            if (!opStatus.isEmpty()) {
                 return GlobalResponse.dataExists("BIZ04FV002", request);
             }
             status.setCreatedBy(Long.parseLong(tokenData.get("id").toString()));
@@ -126,6 +126,59 @@ public class StatusService implements IService<Status> {
         return GlobalResponse.foundData(data, request);
     }
 
+    // 041 - 050
+    @Override
+    public ResponseEntity<Object> findByParam(Pageable pageable, String columnName, String value, HttpServletRequest request) {
+        Page<Status> page;
+        List<ResStatusDTO> listDTO;
+        Map<String, Object> data;
+        try {
+            if (!isValidSort(pageable.getSort().stream().toList().getFirst().getProperty())){
+                return GlobalResponse.dataNotFound("BIZ04FV041", request);
+            }
+            page = switch (columnName) {
+                case "name" -> statusRepo.findByNameContainsIgnoreCase(value, pageable);
+                case "description" -> statusRepo.findByDescriptionContainsIgnoreCase(value, pageable);
+                default -> statusRepo.findAll(pageable);
+            };
+            if (page.isEmpty()) {
+                return GlobalResponse.dataNotFound("BIZ04FV042", request);
+            }
+            listDTO = mapToDTO(page.getContent());
+            data = tp.transformPagination(listDTO, page, columnName, value);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ04FE041", request);
+        }
+        return GlobalResponse.foundData(data, request);
+    }
+
+    // 051 - 060
+    @Override
+    public ResponseEntity<Object> findById(Long id, HttpServletRequest request) {
+        ResStatusDTO response;
+        try {
+            if (id == null) {
+                return GlobalResponse.objectIsNull("BIZ02FV051", request);
+            }
+            Optional<Status> opStatus = statusRepo.findById(id);
+            if (!opStatus.isPresent()) {
+                return GlobalResponse.dataNotFound("BIZ02FV052", request);
+            }
+            Status statusDB = opStatus.get();
+            response = mapToDTO(statusDB);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ02FE051", request);
+        }
+        return GlobalResponse.foundData(response, request);
+    }
+
+    public Boolean isValidSort(String column){
+        return switch (column) {
+            case "name", "description" -> true;
+            default -> false;
+        };
+    }
+
     public Status mapToStatus(ValStatusDTO valStatusDTO) {
         return modelMapper.map(valStatusDTO, Status.class);
     }
@@ -135,4 +188,7 @@ public class StatusService implements IService<Status> {
         }.getType());
     }
 
+    public ResStatusDTO mapToDTO(Status status) {
+        return modelMapper.map(status, ResStatusDTO.class);
+    }
 }

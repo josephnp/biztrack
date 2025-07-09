@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 
 public class ValRequestDetailDTO {
     private Long id;
+    private String description;
     private Double amount;
 
     public Long getId() {
@@ -20,6 +21,14 @@ public class ValRequestDetailDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Double getAmount() {

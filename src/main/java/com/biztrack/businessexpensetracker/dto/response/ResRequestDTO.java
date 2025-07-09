@@ -8,8 +8,8 @@ public class ResRequestDTO {
     private Long id;
     private ResStatusDTO status;
     private String purpose;
+    private String description;
     private Double amount;
-    private Boolean isReported;
     private String comment;
     @JsonProperty("request-detail")
     private List<ResRequestDetailDTO> requestDetails;
@@ -38,20 +38,20 @@ public class ResRequestDTO {
         this.purpose = purpose;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Double getAmount() {
         return amount;
     }
 
     public void setAmount(Double amount) {
         this.amount = amount;
-    }
-
-    public Boolean getReported() {
-        return isReported;
-    }
-
-    public void setReported(Boolean reported) {
-        isReported = reported;
     }
 
     public String getComment() {

@@ -85,6 +85,7 @@ public class UserService implements IService<User> {
             userDB.setEmployeeNumber(user.getEmployeeNumber());
             userDB.setFullName(user.getFullName());
             userDB.setEmail(user.getEmail());
+            userDB.setPassword(bcryptCustom.hash("Password@1234" + user.getEmail()));
             userDB.setModifiedBy(Long.parseLong(tokenData.get("id").toString()));
 
         } catch (Exception e) {
@@ -130,6 +131,61 @@ public class UserService implements IService<User> {
         return GlobalResponse.foundData(data, request);
     }
 
+    // 041 - 050
+    @Override
+    public ResponseEntity<Object> findByParam(Pageable pageable, String columnName, String value, HttpServletRequest request) {
+        Page<User> page;
+        List<ResUserDTO> listDTO;
+        Map<String, Object> data;
+        try {
+            if (!isValidSort(pageable.getSort().stream().toList().getFirst().getProperty())){
+                return GlobalResponse.dataNotFound("BIZ03FV041", request);
+            }
+            page = switch (columnName) {
+                case "name" -> userRepo.findByFullNameContainsIgnoreCase(value, pageable);
+                case "email" -> userRepo.findByEmailContainsIgnoreCase(value, pageable);
+                case "employeeNumber" -> userRepo.findByEmployeeNumberContainsIgnoreCase(value, pageable);
+                case "role" -> userRepo.findByRole_NameContainsIgnoreCase(value, pageable);
+                default -> userRepo.findAll(pageable);
+            };
+            if (page.isEmpty()) {
+                return GlobalResponse.dataNotFound("BIZ03FV042", request);
+            }
+            listDTO = mapToDTO(page.getContent());
+            data = tp.transformPagination(listDTO, page, columnName, value);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ03FE041", request);
+        }
+        return GlobalResponse.foundData(data, request);
+    }
+
+    // 051 - 060
+    @Override
+    public ResponseEntity<Object> findById(Long id, HttpServletRequest request) {
+        ResUserDTO response;
+        try {
+            if (id == null) {
+                return GlobalResponse.objectIsNull("BIZ03FV051", request);
+            }
+            Optional<User> opUser = userRepo.findById(id);
+            if (!opUser.isPresent()) {
+                return GlobalResponse.dataNotFound("BIZ03FV052", request);
+            }
+            User userDB = opUser.get();
+            response = mapToDTO(userDB);
+        } catch (Exception e) {
+            return GlobalResponse.somethingWrong("BIZ03FE051", request);
+        }
+        return GlobalResponse.foundData(response, request);
+    }
+
+    public Boolean isValidSort(String column){
+        return switch (column) {
+            case "id", "fullName", "employeeNumber", "email",  "role.name"-> true;
+            default -> false;
+        };
+    }
+
     public User mapToUser(ValUserDTO valUserDTO) {
         return modelMapper.map(valUserDTO, User.class);
     }
@@ -137,6 +193,10 @@ public class UserService implements IService<User> {
     public List<ResUserDTO> mapToDTO(List<User> listUser) {
         return modelMapper.map(listUser, new TypeToken<List<ResUserDTO>>() {
         }.getType());
+    }
+
+    public ResUserDTO mapToDTO(User user) {
+        return modelMapper.map(user, ResUserDTO.class);
     }
 
     // 041 - 050
